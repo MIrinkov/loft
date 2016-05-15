@@ -2,12 +2,30 @@
  * Created by hlfrmn on 5/15/2016.
  */
 
-function getDiscount(id){
+var baseMinutePrice = 2;
+var discountedMinutePrice = 1.5;
+var minutesForDiscount = 60;
 
+function getDiscount(id){
+    return 1;
 }
 
 function calculateTimeCost(time){
-    return 100;
+    var timeCost = 0;
+    if(time>=minutesForDiscount){
+        timeCost+=minutesForDiscount*discountedMinutePrice;
+        time -= minutesForDiscount;
+    }
+    timeCost+=time*baseMinutePrice;
+    return timeCost;
+}
+
+function calculateOrdersCost(orders) {
+    var ordersCost = 0;
+    orders.forEach(function (order) {
+        ordersCost+= order.price;
+    })
+    return ordersCost;
 }
 
 function calculateTotalCost(customer){
@@ -16,11 +34,11 @@ function calculateTotalCost(customer){
     // timeRate is 1 for no discounts, less with discounts
     // e.g. 0.75 for a 25% discount
     var timeRate = getDiscount(customer.id);
-    timeCost = timeCost * timeRate;
-
+    timeCost = (timeCost * timeRate)>350 ? 350 : (timeCost * timeRate);
+    // ordersCost stores how much are the extra orders
     var ordersCost = calculateOrdersCost(customer.orders);
-    return timeCost + ordersCost;
 
+    return timeCost + ordersCost;
 }
 ////////////////////////////////////////
 //////////////  Classes  ///////////////
@@ -41,6 +59,9 @@ function Customer(id, name, start) {
 }
 
 Customer.prototype = {
+    addOrder: function (orderObj) {
+        this.orders.push(orderObj);
+    },
     checkOut: function () {
         return this.moneyTotal;
     },
@@ -128,7 +149,7 @@ var view = {
         this.customerDetails = document.getElementById('customer-details');
         this.customerTimeValue = document.getElementById('customer-time-value');
         this.customerMoneyValue = document.getElementById('customer-money-value');
-        this.render();
+        this.refreshInterval = setInterval(this.render.bind(this), 1000);
     },
     render: function () {
         // render customer list: first clear it,
@@ -152,11 +173,16 @@ var view = {
         var custName = document.createElement('span');
         custName.textContent = customer.name;
         var custId = document.createElement('span');
-        custId.textContent = customer.id;
+        custId.textContent = 'id ' + customer.id;
         var custTime = document.createElement('span');
-        custTime.textContent = customer.timeTotal;
+        if(customer.getTimeSpentSeconds()<60){
+            custTime.textContent = 'Time: ' + customer.getTimeSpentSeconds() + ' s';
+        }
+        else{
+            custTime.textContent = 'Time: ' + customer.getTimeSpentMinutes() + ' m';
+        }
         var custMoney = document.createElement('span');
-        custMoney.textContent = customer.moneyTotal;
+        custMoney.textContent = 'Money: ' + customer.moneyTotal;
 
         div.appendChild(custName);
         div.appendChild(custId);
@@ -188,10 +214,19 @@ var controller = {
     },
     deleteCustomer: function (customer) {
         model.deleteCustomer(customer);
+        view.render();
     },
     getAllCustomers: function () {
         return model.getAllCustomers();
     }
 };
 
+function test(){
+    setTimeout(function(){controller.addCustomer({name: 'pavel', id: 321})},1000);
+    setTimeout(function(){controller.addCustomer({name: 'jay', id: 123})},8*1000);
+    setTimeout(function(){controller.addCustomer({name: 'amir', id: 666})},13*1000);
+}
+
+
 controller.init();
+test();
