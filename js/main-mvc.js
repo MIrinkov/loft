@@ -62,6 +62,15 @@ Customer.prototype = {
     addOrder: function (orderObj) {
         this.orders.push(orderObj);
     },
+    removeOrder: function(order){
+        var index = this.orders.indexOf(order);
+        if(index>-1){
+            this.orders.splice(index,1);
+        }
+        else {
+            console.log('Order deletion error - order not found.')
+        }
+    },
     checkOut: function () {
         return this.moneyTotal;
     },
@@ -107,10 +116,17 @@ Customer.validate = function (obj) {
 var model = {
     init: function () {
         this.customers = [];
+        if(!localStorage.loft){
+            localStorage.loft = JSON.stringify([]);
+        }
+        else{
+            var backup = JSON.parse(localStorage.loft);
+            model.restoreFromBackup(backup);
+        }
     },
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
-            var customer = new Customer(obj.id, obj.name, (Date.now()));
+            var customer = new Customer(obj.id, obj.name, obj.start ? Date(obj.start) : Date.now());
             this.customers.push(customer);
         }
         else {
@@ -135,6 +151,14 @@ var model = {
             customer.clearIntervals();
         });
         this.customers.length = 0;
+    },
+    checkOutCustomer:function (customer) {
+        customer.checkOut();
+    },
+    restoreFromBackup:function (backup) {
+        backup.forEach(function (customer) {
+            model.addCustomer(customer)
+        });
     }
 
 };
@@ -145,11 +169,31 @@ var model = {
 
 var view = {
     init: function () {
+        // declare variables from the DOM
+        // First, the form
+        var customerForm = document.getElementById('customer-add-form');
+        var customerAddName = document.getElementById('customer-add-name');
+        var customerAddId = document.getElementById('customer-add-id');
+        // The list view
         this.customerList = document.getElementById('customer-list');
+        // The details view
         this.customerDetails = document.getElementById('customer-details');
+        this.customerNameId = document.getElementById('customer-name-id');
         this.customerTimeValue = document.getElementById('customer-time-value');
         this.customerMoneyValue = document.getElementById('customer-money-value');
+        this.customerButtons = document.getElementById('customer-details-buttons');
+
+        customerForm.addEventListener('submit',function (e) {
+            var obj = {};
+            obj.name = customerAddName.value;
+            obj.id = customerAddId.value;
+            controller.addCustomer(obj);
+            e.preventDefault();
+            customerForm.reset();
+        });
+        this.hideDetails();
         this.refreshInterval = setInterval(this.render.bind(this), 1000);
+
     },
     render: function () {
         // render customer list: first clear it,
@@ -160,12 +204,41 @@ var view = {
         });
     },
     renderDetails:function (customer) {
-        var h2 = document.createElement('h2');
-        h2.textContent = customer.name + ' - ' + customer.id;
+        this.showDetails();
+        this.customerNameId.textContent = customer.name + ' - ' + customer.id;
         
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal;
 
+        this.customerButtons.innerHTML='';
+
+        var checkoutBtn = document.createElement('button');
+        checkoutBtn.type = 'button';
+        checkoutBtn.textContent = 'Checkout';
+        checkoutBtn.addEventListener('click',(function (customer) {
+            return function () {
+                controller.checkOutCustomer(customer);
+            }
+        })(customer));
+
+        var deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click',(function (customer) {
+            return function () {
+                controller.deleteCustomer(customer);
+                view.hideDetails();
+            }
+        })(customer));
+
+        this.customerButtons.appendChild(checkoutBtn);
+        this.customerButtons.appendChild(deleteBtn);
+    },
+    hideDetails:function () {
+        this.customerDetails.style.display = 'none';
+    },
+    showDetails:function () {
+        this.customerDetails.style.display = '';
     },
     createCustomerBlock: function (customer) {
         var div = document.createElement('div');
@@ -218,6 +291,13 @@ var controller = {
     },
     getAllCustomers: function () {
         return model.getAllCustomers();
+    },
+    deleteAllCustomers: function () {
+        model.deleteAllCustomers();
+        view.render();
+    },
+    checkOutCustomer:function (customer) {
+        model.checkOutCustomer(customer);
     }
 };
 

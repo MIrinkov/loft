@@ -9,14 +9,19 @@
             font-size: 20px;
         }
         #customer-list>div>span{
-            padding: 0px 15px;
+            padding: 0 15px;
         }
     </style>
 </head>
 <body>
 <section>
-    <div id="customer-list" style="width:50%; background-color: #eee;"></div>
-    <div id="customer-details" style="margin-left: 50%;">
+    <form id="customer-add-form">
+        <input type="text" id="customer-add-name" placeholder="Name">
+        <input type="number" id="customer-add-id" placeholder="Id">
+        <button type="submit" id="customer-add-btn">Add</button>
+    </form>
+    <div id="customer-list" style="width:50%; background-color: #eee; float: left;"></div>
+    <div id="customer-details" style="margin-left: 52%;">
         <h2 id="customer-name-id"></h2>
         <div id="customer-time">
             Time total:
@@ -25,6 +30,9 @@
         <div id="customer-money">
             Money total:
             <span id="customer-money-value"></span>
+        </div>
+        <div id="customer-details-buttons">
+
         </div>
 
     </div>
