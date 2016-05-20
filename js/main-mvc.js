@@ -188,28 +188,34 @@ var view = {
         this.customerListHandles = [];
 
         customerForm.addEventListener('submit', function (e) {
-            var obj = {};
-            obj.name = customerAddName.value;
-            obj.id = customerAddId.value;
-            controller.addCustomer(obj);
+            // console.log('Add initiated from form.');
             e.preventDefault();
+            var obj = {
+                name: customerAddName.value,
+                id: customerAddId.value
+            };
+            controller.addCustomer(obj);
             customerForm.reset();
         });
 
         // setInterval(this.render.bind(this), 1000);
 
     },
+
     render: function () {
         // render customer list: first clear it,
         // then render blocks for each customer
         this.customerListHandles.forEach(function (handle) {
-            clearIntervals(handle);
+            clearInterval(handle);
         });
+
         this.customerList.innerHTML = '';
+
         controller.getAllCustomers().forEach(function (customer) {
             view.createCustomerBlock(customer);
         });
     },
+
     renderDetails: function (customer) {
 
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
