@@ -206,7 +206,7 @@ var view = {
         });
     },
     renderDetails: function (customer) {
-        this.showDetails();
+
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
 
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
@@ -229,7 +229,6 @@ var view = {
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
-                view.hideDetails();
             }
         })(customer));
 
@@ -263,12 +262,7 @@ var view = {
         this.customerButtons.appendChild(deleteBtn);
         this.customerButtons.appendChild(orderSubmitBtn);
     },
-    hideDetails: function () {
-        this.customerDetails.style.display = 'none';
-    },
-    showDetails: function () {
-        this.customerDetails.style.display = '';
-    },
+
     createCustomerBlock: function (customer) {
         var div = document.createElement('div');
         div.classList.toggle('list-group-item');
