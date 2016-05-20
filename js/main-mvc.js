@@ -185,6 +185,8 @@ var view = {
         this.customerMoneyValue = document.getElementById('customer-money-value');
         this.customerButtons = document.getElementById('customer-details-buttons');
 
+        this.customerListHandles = [];
+
         customerForm.addEventListener('submit', function (e) {
             var obj = {};
             obj.name = customerAddName.value;
@@ -200,14 +202,15 @@ var view = {
     render: function () {
         // render customer list: first clear it,
         // then render blocks for each customer
+        this.customerListHandles.forEach(function (handle) {
+            clearIntervals(handle);
+        });
         this.customerList.innerHTML = '';
         controller.getAllCustomers().forEach(function (customer) {
             view.createCustomerBlock(customer);
         });
     },
     renderDetails: function (customer) {
-        var modal = document.querySelector('#customerDetailsModal');
-        modal.modal();
 
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
 
@@ -235,7 +238,7 @@ var view = {
         })(customer));
 
         var orderForm = document.createElement('form');
-        this.customerDetails.appendChild(orderForm);
+        this.customerButtons.appendChild(orderForm);
 
         var orderNameInput = document.createElement('input');
         orderNameInput.type = 'text';
@@ -266,41 +269,50 @@ var view = {
     },
 
     createCustomerBlock: function (customer) {
-        var div = document.createElement('div');
-        div.classList.toggle('list-group-item');
-        var custName = document.createElement('span');
+        var tr = document.createElement('tr');
+
+
+        var custName = document.createElement('td');
         custName.textContent = customer.name;
-        var custId = document.createElement('span');
-        custId.textContent = 'id ' + customer.id;
-        var custTime = document.createElement('span');
-        if (customer.getTimeSpentSeconds() < 60) {
-            custTime.textContent = 'Time: ' + customer.getTimeSpentSeconds() + ' s';
-        }
-        else {
-            custTime.textContent = 'Time: ' + customer.getTimeSpentMinutes() + ' m';
-        }
-        var custMoney = document.createElement('span');
-        custMoney.textContent = 'Money: ' + customer.moneyTotal;
+        var custId = document.createElement('td');
+        custId.textContent = customer.id;
 
-        div.appendChild(custName);
-        div.appendChild(custId);
-        div.appendChild(custTime);
-        div.appendChild(custMoney);
+        var custTime = document.createElement('td');
+        custTime.textContent = '0';
+        var timeHandle = setInterval(((function (customer) {
+            return function () {
+                if (customer.getTimeSpentSeconds() < 60) {
+                    custTime.textContent = customer.getTimeSpentSeconds() + ' s';
+                }
+                else {
+                    custTime.textContent = customer.getTimeSpentMinutes() + ' m';
+                }
+            }
+        })(customer)), 1000);
+        this.customerListHandles.push(timeHandle);
 
-        var showDetailsBtn = document.createElement('button');
-        showDetailsBtn.textContent = 'Details';
-        showDetailsBtn.type = 'button';
-        showDetailsBtn.className = 'btn btn-info btn-lg';
-        div.appendChild(showDetailsBtn);
+        var custMoney = document.createElement('td');
+        custMoney.textContent = customer.moneyTotal;
+        var moneyHandle = setInterval(((function (customer) {
+            return function () {
+                custMoney.textContent = customer.moneyTotal;
+            }
+        })(customer)), 1000);
+        this.customerListHandles.push(moneyHandle);
 
-        showDetailsBtn.addEventListener('click', (function (customer) {
+        tr.appendChild(custName);
+        tr.appendChild(custId);
+        tr.appendChild(custTime);
+        tr.appendChild(custMoney);
+
+        tr.addEventListener('click', (function (customer) {
             return function () {
                 view.renderDetails(customer);
-                div.classList.toggle('active');
+                tr.classList.toggle('active');
             }
         })(customer));
 
-        this.customerList.appendChild(div);
+        this.customerList.appendChild(tr);
     }
 };
 
