@@ -1,68 +1,39 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>OSWD Javascript Project</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    </head>
-
-    <body>
-
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h2>My CD Records</h1>
-            <button style="margin-bottom:15px" class="btn btn-success btn-md" type="button" data-toggle="collapse" data-target="#collapseAddRecord" aria-expanded="false" aria-controls="collapseAddRecord">
-            Add record
-            </button>
-            <div class="collapse" id="collapseAddRecord">
-                <form name="addRecordForm" class="card card-block form-inline" onsubmit="addRecord()">
-                  <div class="form-group">
-                    <label for="band"></label>
-                    <input type="text" class="form-control" placeholder="Band" id="band" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="album"></label>
-                    <input type="text" class="form-control" placeholder="Album" id="album" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="year"></label>
-                    <input type="number" class="form-control" min="1901" max="2016" placeholder="Year" id="year" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="rating"></label>
-                    <input style="min-width:200px" type="number" min="1" max="10" class="form-control" placeholder="Rating" id="rating" required>
-                  </div>
-                  <button type="submit" class="btn btn-primary">Add</button>
-                </form>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <title>Loft cafe</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<section>
+    <form id="customer-add-form">
+        <input type="text" id="customer-add-name" placeholder="Name">
+        <input type="number" id="customer-add-id" placeholder="Id">
+        <button type="submit" id="customer-add-btn">Add</button>
+    </form>
+    <div id="customer-list" style="width:50%; background-color: #eee; float: left;"></div>
+    <div id="customer-details" style="margin-left: 52%;">
+        <h2 id="customer-name-id"></h2>
+        <div id="customer-time">
+            Time total:
+            <span id="customer-time-value"></span>
+        </div>
+        <div id="customer-money">
+            Money total:
+            <span id="customer-money-value"></span>
+        </div>
+        <div id="customer-details-buttons">
 
         </div>
+
     </div>
-    <div class="container">
-        <table class="table table-hover">
-         <thead>
-            <tr>
-                <th>Band</th>
-                <th>Album</th>
-                <th>Year</th>
-                <th>Rating</th>
-            </tr>
-         </thead>
-         <tbody id="table-records">
-         </tbody>
-        </table>
-    </div>
-    <div class="container">
-        <p class="alert alert-info" id="average-rating"> Average rating is </p>
-        <p class="alert alert-info" id="maximum-rating">Maximum rating is </p>
-    </div>
-    <script src="js/main.js"></script>
-    <script>
-        renderRecords();
-    </script>
-    
-    </body>
+</section>
+<script src="js/main-mvc.js"></script>
+</body>
 </html>
