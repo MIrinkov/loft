@@ -193,8 +193,8 @@ var view = {
             e.preventDefault();
             customerForm.reset();
         });
-        this.hideDetails();
-        setInterval(this.render.bind(this), 1000);
+        
+        // setInterval(this.render.bind(this), 1000);
 
     },
     render: function () {
