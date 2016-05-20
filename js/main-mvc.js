@@ -6,36 +6,36 @@ var baseMinutePrice = 2;
 var discountedMinutePrice = 1.5;
 var minutesForDiscount = 60;
 
-function getDiscount(id){
+function getDiscount(id) {
     return 1;
 }
 
-function calculateTimeCost(time){
+function calculateTimeCost(time) {
     var timeCost = 0;
     if (time >= minutesForDiscount) {
         time -= minutesForDiscount;
-        timeCost+=minutesForDiscount*discountedMinutePrice;
+        timeCost += minutesForDiscount * discountedMinutePrice;
     }
 
-    timeCost+=time*baseMinutePrice;
+    timeCost += time * baseMinutePrice;
     return timeCost;
 }
 
 function calculateOrdersCost(orders) {
     var ordersCost = 0;
     orders.forEach(function (order) {
-        ordersCost+= order.price;
+        ordersCost += order.price;
     });
     return ordersCost;
 }
 
-function calculateTotalCost(customer){
+function calculateTotalCost(customer) {
     //timeCost stores the cost of time (without extra orders)
     var timeCost = calculateTimeCost(customer.getTimeSpentMinutes());
     // timeRate is 1 for no discounts, less with discounts
     // e.g. 0.75 for a 25% discount
     var timeRate = getDiscount(customer.id);
-    timeCost = (timeCost * timeRate)>350 ? 350 : (timeCost * timeRate);
+    timeCost = (timeCost * timeRate) > 350 ? 350 : (timeCost * timeRate);
     // ordersCost stores how much are the extra orders
     var ordersCost = calculateOrdersCost(customer.orders);
 
@@ -63,10 +63,10 @@ Customer.prototype = {
     addOrder: function (orderObj) {
         this.orders.push(orderObj);
     },
-    removeOrder: function(order){
+    removeOrder: function (order) {
         var index = this.orders.indexOf(order);
-        if(index>-1){
-            this.orders.splice(index,1);
+        if (index > -1) {
+            this.orders.splice(index, 1);
         }
         else {
             console.log('Order deletion error - order not found.')
@@ -84,10 +84,10 @@ Customer.prototype = {
     updateTime: function () {
         this.timeTotal = Date.now() - this.start;
     },
-    updateMoney:function () {
+    updateMoney: function () {
         this.moneyTotal = calculateTotalCost(this);
     },
-    clearIntervals:function () {
+    clearIntervals: function () {
         clearInterval(this.timeInterval);
         clearInterval(this.moneyInterval);
     }
@@ -110,25 +110,25 @@ Customer.validate = function (obj) {
 //////////////////////////  MVC  //////////////////////////////
 
 
- //////////////////////////////////////////////////////////////
- ////////////////////////  MODEL  /////////////////////////////
- //////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+////////////////////////  MODEL  /////////////////////////////
+//////////////////////////////////////////////////////////////
 
 
 var model = {
     init: function () {
         this.customers = [];
-        if(!localStorage.loft){
+        if (!localStorage.loft) {
             localStorage.loft = JSON.stringify([]);
         }
-        else{
+        else {
             var backup = JSON.parse(localStorage.loft);
             model.restoreFromBackup(backup);
         }
     },
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
-            var customer = new Customer(obj.id, obj.name, obj.start ? Date(obj.start) : Date.now());
+            var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now());
             this.customers.push(customer);
         }
         else {
@@ -148,16 +148,16 @@ var model = {
     getAllCustomers: function () {
         return this.customers;
     },
-    deleteAllCustomers:function () {
+    deleteAllCustomers: function () {
         this.customers.forEach(function (customer) {
             customer.clearIntervals();
         });
         this.customers.length = 0;
     },
-    checkOutCustomer:function (customer) {
+    checkOutCustomer: function (customer) {
         customer.checkOut();
     },
-    restoreFromBackup:function (backup) {
+    restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
             model.addCustomer(customer)
         });
@@ -185,7 +185,7 @@ var view = {
         this.customerMoneyValue = document.getElementById('customer-money-value');
         this.customerButtons = document.getElementById('customer-details-buttons');
 
-        customerForm.addEventListener('submit',function (e) {
+        customerForm.addEventListener('submit', function (e) {
             var obj = {};
             obj.name = customerAddName.value;
             obj.id = customerAddId.value;
@@ -205,19 +205,19 @@ var view = {
             view.createCustomerBlock(customer);
         });
     },
-    renderDetails:function (customer) {
+    renderDetails: function (customer) {
         this.showDetails();
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
-        
+
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal;
 
-        this.customerButtons.innerHTML='';
+        this.customerButtons.innerHTML = '';
 
         var checkoutBtn = document.createElement('button');
         checkoutBtn.type = 'button';
         checkoutBtn.textContent = 'Checkout';
-        checkoutBtn.addEventListener('click',(function (customer) {
+        checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.checkOutCustomer(customer);
             }
@@ -226,34 +226,58 @@ var view = {
         var deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click',(function (customer) {
+        deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
                 view.hideDetails();
             }
         })(customer));
 
+        var orderForm = document.createElement('form');
+
+        var orderNameInput = document.createElement('input');
+        orderNameInput.type = 'text';
+        orderForm.appendChild(orderNameInput);
+
+        var orderPriceInput = document.createElement('input');
+        orderPriceInput.type = 'number';
+        orderForm.appendChild(orderPriceInput);
+
+        var orderSubmitBtn = document.createElement('button');
+        orderSubmitBtn.type = 'submit';
+        orderSubmitBtn.textContent = 'Add order';
+        orderSubmitBtn.addEventListener('click', function (customer) {
+            return function (e) {
+                e.preventDefault();
+                var order = {name: orderNameInput.value, price: orderPriceInput.value};
+                controller.addOrderToCustomer(customer, order);
+                view.renderDetails(customer);
+                orderForm.reset();
+            }
+        });
+
         this.customerButtons.appendChild(checkoutBtn);
         this.customerButtons.appendChild(deleteBtn);
+        this.customerButtons.appendChild(orderSubmitBtn);
     },
-    hideDetails:function () {
+    hideDetails: function () {
         this.customerDetails.style.display = 'none';
     },
-    showDetails:function () {
+    showDetails: function () {
         this.customerDetails.style.display = '';
     },
     createCustomerBlock: function (customer) {
         var div = document.createElement('div');
-
+        div.classList.toggle('list-group-item');
         var custName = document.createElement('span');
         custName.textContent = customer.name;
         var custId = document.createElement('span');
         custId.textContent = 'id ' + customer.id;
         var custTime = document.createElement('span');
-        if(customer.getTimeSpentSeconds()<60){
+        if (customer.getTimeSpentSeconds() < 60) {
             custTime.textContent = 'Time: ' + customer.getTimeSpentSeconds() + ' s';
         }
-        else{
+        else {
             custTime.textContent = 'Time: ' + customer.getTimeSpentMinutes() + ' m';
         }
         var custMoney = document.createElement('span');
@@ -298,15 +322,24 @@ var controller = {
         model.deleteAllCustomers();
         view.render();
     },
-    checkOutCustomer:function (customer) {
+    checkOutCustomer: function (customer) {
         model.checkOutCustomer(customer);
+    },
+    addOrderToCustomer: function (customer, order) {
+        customer.addOrder(order);
     }
 };
 
-function test(){
-    setTimeout(function(){controller.addCustomer({name: 'pavel', id: 321})},1000);
-    setTimeout(function(){controller.addCustomer({name: 'jay', id: 123})},8*1000);
-    setTimeout(function(){controller.addCustomer({name: 'amir', id: 666})},13*1000);
+function test() {
+    setTimeout(function () {
+        controller.addCustomer({name: 'pavel', id: 321})
+    }, 1000);
+    setTimeout(function () {
+        controller.addCustomer({name: 'jay', id: 123})
+    }, 8 * 1000);
+    setTimeout(function () {
+        controller.addCustomer({name: 'amir', id: 666})
+    }, 13 * 1000);
 }
 
 
