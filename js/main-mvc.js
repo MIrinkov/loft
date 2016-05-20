@@ -123,6 +123,7 @@ var model = {
         }
         else {
             var backup = JSON.parse(localStorage.loft);
+            localStorage.loft = JSON.stringify([]);
             model.restoreFromBackup(backup);
         }
     },
@@ -130,6 +131,7 @@ var model = {
         if (Customer.validate(obj)) {
             var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now());
             this.customers.push(customer);
+            localStorage.loft = JSON.stringify(this.customers);
         }
         else {
             console.log('Customer data validation error on creation!');
@@ -140,6 +142,7 @@ var model = {
         if (index > -1) {
             customer.clearIntervals();
             this.customers.splice(index, 1);
+            localStorage.loft = JSON.stringify(this.customers);
         }
         else {
             console.log('Deletion error: customer not in the list!');
@@ -153,9 +156,20 @@ var model = {
             customer.clearIntervals();
         });
         this.customers.length = 0;
+        localStorage.loft = JSON.stringify([]);
     },
     checkOutCustomer: function (customer) {
         customer.checkOut();
+    },
+    AddOrderToCustomer: function (customer,order) {
+        var index = this.customers.indexOf(customer);
+        if (index > -1) {
+            customer.addOrder(order);
+            localStorage.loft = JSON.stringify(this.customers);
+        }
+        else {
+            console.log('Add order error: customer not in the list!');
+        }
     },
     restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
@@ -198,7 +212,7 @@ var view = {
             customerForm.reset();
         });
 
-        // setInterval(this.render.bind(this), 1000);
+        this.render();
 
     },
 
@@ -351,7 +365,7 @@ var controller = {
         model.checkOutCustomer(customer);
     },
     addOrderToCustomer: function (customer, order) {
-        customer.addOrder(order);
+        model.addOrderToCustomer(customer,order);
     }
 };
 
