@@ -193,7 +193,7 @@ var view = {
             e.preventDefault();
             customerForm.reset();
         });
-        
+
         // setInterval(this.render.bind(this), 1000);
 
     },
@@ -206,6 +206,8 @@ var view = {
         });
     },
     renderDetails: function (customer) {
+        var modal = document.querySelector('#customerDetailsModal');
+        modal.modal();
 
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
 
@@ -289,8 +291,6 @@ var view = {
         showDetailsBtn.textContent = 'Details';
         showDetailsBtn.type = 'button';
         showDetailsBtn.className = 'btn btn-info btn-lg';
-        showDetailsBtn['data-toggle'] = 'modal';
-        showDetailsBtn['data-target'] = '#customerDetailsModal';
         div.appendChild(showDetailsBtn);
 
         showDetailsBtn.addEventListener('click', (function (customer) {
