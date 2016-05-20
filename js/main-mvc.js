@@ -24,7 +24,7 @@ function calculateOrdersCost(orders) {
     var ordersCost = 0;
     orders.forEach(function (order) {
         ordersCost+= order.price;
-    })
+    });
     return ordersCost;
 }
 
@@ -192,7 +192,7 @@ var view = {
             customerForm.reset();
         });
         this.hideDetails();
-        this.refreshInterval = setInterval(this.render.bind(this), 1000);
+        setInterval(this.render.bind(this), 1000);
 
     },
     render: function () {
