@@ -12,10 +12,11 @@ function getDiscount(id){
 
 function calculateTimeCost(time){
     var timeCost = 0;
-    if(time>=minutesForDiscount){
-        timeCost+=minutesForDiscount*discountedMinutePrice;
+    if (time >= minutesForDiscount) {
         time -= minutesForDiscount;
+        timeCost+=minutesForDiscount*discountedMinutePrice;
     }
+
     timeCost+=time*baseMinutePrice;
     return timeCost;
 }
@@ -93,14 +94,15 @@ Customer.prototype = {
 };
 
 Customer.validate = function (obj) {
-    if ((!obj.name) || (obj.name === '')){
+    // console.log("hellooo");
+    if ((!obj.name || (obj.name === '')) && (!obj.id || (!obj.id > 0))) {
         console.log('Customer name validation failed.');
         return false;
     }
-    if ((!obj.id) || (!obj.id > 0)){
-        console.log('Customer id validation failed.');
-        return false;
-    }
+    // if ((!obj.id) || (!obj.id > 0)){
+    //     console.log('Customer id validation failed.');
+    //     return false;
+    // }
     return true;
 };
 
@@ -309,4 +311,4 @@ function test(){
 
 
 controller.init();
-test();
+// test();
