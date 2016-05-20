@@ -18,7 +18,7 @@ function calculateTimeCost(time) {
     }
 
     timeCost += time * baseMinutePrice;
-    return timeCost;
+    return parseFloat(timeCost);
 }
 
 function calculateOrdersCost(orders) {
@@ -26,7 +26,7 @@ function calculateOrdersCost(orders) {
     orders.forEach(function (order) {
         ordersCost += order.price;
     });
-    return ordersCost;
+    return parseFloat(ordersCost);
 }
 
 function calculateTotalCost(customer) {
@@ -256,7 +256,7 @@ var view = {
         orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
-                var order = {name: orderNameInput.value, price: orderPriceInput.value};
+                var order = {name: orderNameInput.value, price: parseFloat(orderPriceInput.value)};
                 controller.addOrderToCustomer(customer, order);
                 view.renderDetails(customer);
                 orderForm.reset();
