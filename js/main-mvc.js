@@ -234,19 +234,22 @@ var view = {
         })(customer));
 
         var orderForm = document.createElement('form');
+        this.customerDetails.appendChild(orderForm);
 
         var orderNameInput = document.createElement('input');
         orderNameInput.type = 'text';
+        orderNameInput.placeholder = 'Order name';
         orderForm.appendChild(orderNameInput);
 
         var orderPriceInput = document.createElement('input');
         orderPriceInput.type = 'number';
+        orderPriceInput.placeholder = 'Order price';
         orderForm.appendChild(orderPriceInput);
 
         var orderSubmitBtn = document.createElement('button');
         orderSubmitBtn.type = 'submit';
         orderSubmitBtn.textContent = 'Add order';
-        orderSubmitBtn.addEventListener('click', function (customer) {
+        orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
                 var order = {name: orderNameInput.value, price: orderPriceInput.value};
@@ -254,7 +257,7 @@ var view = {
                 view.renderDetails(customer);
                 orderForm.reset();
             }
-        });
+        })(customer));
 
         this.customerButtons.appendChild(checkoutBtn);
         this.customerButtons.appendChild(deleteBtn);
@@ -288,7 +291,15 @@ var view = {
         div.appendChild(custTime);
         div.appendChild(custMoney);
 
-        div.addEventListener('click', (function (customer) {
+        var showDetailsBtn = document.createElement('button');
+        showDetailsBtn.textContent = 'Details';
+        showDetailsBtn.type = 'button';
+        showDetailsBtn.className = 'btn btn-info btn-lg';
+        showDetailsBtn['data-toggle'] = 'modal';
+        showDetailsBtn['data-target'] = '#customerDetailsModal';
+        div.appendChild(showDetailsBtn);
+
+        showDetailsBtn.addEventListener('click', (function (customer) {
             return function () {
                 view.renderDetails(customer);
                 div.classList.toggle('active');
