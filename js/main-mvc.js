@@ -291,6 +291,7 @@ var view = {
         div.addEventListener('click', (function (customer) {
             return function () {
                 view.renderDetails(customer);
+                div.classList.toggle('active');
             }
         })(customer));
 
