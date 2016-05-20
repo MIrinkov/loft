@@ -270,7 +270,8 @@ var view = {
 
     createCustomerBlock: function (customer) {
         var tr = document.createElement('tr');
-
+        tr.setAttribute('data-toggle','modal');
+        tr.setAttribute('data-target','#showDetailsModal');
 
         var custName = document.createElement('td');
         custName.textContent = customer.name;
