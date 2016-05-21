@@ -383,7 +383,6 @@ var view = {
         tr.addEventListener('click', (function (customer) {
             return function () {
                 view.renderDetails(customer);
-                tr.classList.toggle('active');
             }
         })(customer));
 
