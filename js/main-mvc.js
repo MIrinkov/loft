@@ -48,7 +48,7 @@ function Customer(id, name, start, discount) {
     this.id = id;
     this.start = start;
     if(discount){
-        this.discount = parseInt(discount);
+        this.discount = parseInt(discount)/100;
     }
     else{
         this.discount = 0;
@@ -57,6 +57,7 @@ function Customer(id, name, start, discount) {
     this.orders = [];
     this.timeTotal = 0;
     this.moneyTotal = 0;
+    this.discountTotal = 0;
     // saving intervals to a variable,
     // so as to clear the intervals on destruction
     this.timeInterval = setInterval(this.updateTime.bind(this), 1000);
@@ -77,7 +78,7 @@ Customer.prototype = {
         }
     },
     checkOut: function () {
-        return this.moneyTotal;
+        return {total:this.moneyTotal,discount:this.discountTotal};
     },
     getTimeSpentSeconds: function () {
         return Math.floor(this.timeTotal / (1000));
@@ -94,11 +95,12 @@ Customer.prototype = {
         // timeRate is 1 for no discounts, less with discounts
         // e.g. 0.75 for a 25% discount
         var timeRate = 1 - this.discount;
-        timeCost = (timeCost * timeRate) > STOP_CHECK ? STOP_CHECK : (timeCost * timeRate);
+        var totalTimeCost = (timeCost * timeRate) > STOP_CHECK ? STOP_CHECK : (timeCost * timeRate);
+        this.discountTotal = totalTimeCost - (timeCost > STOP_CHECK ? STOP_CHECK : timeCost);
+
         // ordersCost stores how much are the extra orders
         var ordersCost = calculateOrdersCost(this.orders);
-
-        this.moneyTotal = timeCost + ordersCost;
+        this.moneyTotal = totalTimeCost + ordersCost;
     },
     clearIntervals: function () {
         clearInterval(this.timeInterval);
