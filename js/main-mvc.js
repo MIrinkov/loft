@@ -194,10 +194,11 @@ var model = {
     restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
             var addedCustomer = model.addCustomer(customer);
-
             customer.orders.forEach(function (order) {
                 model.addOrderToCustomer(addedCustomer, order);
             });
+            addedCustomer.updateTime();
+            addedCustomer.updateMoney();
         });
 
     }
@@ -347,7 +348,12 @@ var view = {
         custId.textContent = customer.id;
 
         var custTime = document.createElement('td');
-        custTime.textContent = '0';
+        if (customer.getTimeSpentSeconds() < 60) {
+            custTime.textContent = customer.getTimeSpentSeconds() + ' s';
+        }
+        else {
+            custTime.textContent = customer.getTimeSpentMinutes() + ' m';
+        }
         var timeHandle = setInterval(((function (customer) {
             return function () {
                 if (customer.getTimeSpentSeconds() < 60) {
