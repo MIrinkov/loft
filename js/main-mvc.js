@@ -216,6 +216,7 @@ var view = {
         var customerForm = document.getElementById('customer-add-form');
         var customerAddName = document.getElementById('customer-add-name');
         var customerAddId = document.getElementById('customer-add-id');
+        var customerAddDiscount = document.getElementById('customer-add-discount');
         // The list view
         this.customerList = document.getElementById('customer-list');
         // The details view
@@ -233,7 +234,8 @@ var view = {
             e.preventDefault();
             var obj = {
                 name: customerAddName.value,
-                id: customerAddId.value
+                id: customerAddId.value,
+                discount: parseInt(customerAddDiscount.value)/100
             };
             controller.addCustomer(obj);
             customerForm.reset();
