@@ -27,18 +27,6 @@ function calculateOrdersCost(orders) {
     return parseFloat(ordersCost);
 }
 
-function calculateTotalCost(customer) {
-    //timeCost stores the cost of time (without extra orders)
-    var timeCost = calculateTimeCost(customer.getTimeSpentMinutes());
-    // timeRate is 1 for no discounts, less with discounts
-    // e.g. 0.75 for a 25% discount
-    var timeRate = getDiscount(customer.id);
-    timeCost = (timeCost * timeRate) > 350 ? 350 : (timeCost * timeRate);
-    // ordersCost stores how much are the extra orders
-    var ordersCost = calculateOrdersCost(customer.orders);
-
-    return timeCost + ordersCost;
-}
 ////////////////////////////////////////
 //////////////  Classes  ///////////////
 ////////////////////////////////////////
@@ -200,9 +188,10 @@ var model = {
             addedCustomer.updateTime();
             addedCustomer.updateMoney();
         });
-
+    },
+    editDiscount: function (customer, discount) {
+        customer.discount = parseFloat(discount);
     }
-
 };
 
 ////////////////////////////////////////////////////////////////
@@ -235,14 +224,12 @@ var view = {
             var obj = {
                 name: customerAddName.value,
                 id: customerAddId.value,
-                discount: parseInt(customerAddDiscount.value)/100
+                discount: parseInt(customerAddDiscount.value) / 100
             };
             controller.addCustomer(obj);
             customerForm.reset();
         });
-
         this.render();
-
     },
 
     render: function () {
@@ -334,9 +321,21 @@ var view = {
             }
         })(customer));
 
+        var editDiscountBtn = document.createElement('button');
+        editDiscountBtn.type = 'button';
+        editDiscountBtn.textContent = 'Discount';
+        editDiscountBtn.addEventListener('click', (function (customer) {
+            return function () {
+                var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
+                controller.editCustomerDiscount(customer, newDiscount);
+            }
+        })(customer));
+
+
         this.customerButtons.appendChild(checkoutBtn);
         this.customerButtons.appendChild(deleteBtn);
         this.customerButtons.appendChild(orderSubmitBtn);
+        this.customerButtons.appendChild(editDiscountBtn);
     },
 
     createCustomerBlock: function (customer) {
@@ -423,7 +422,9 @@ var controller = {
     },
     addOrderToCustomer: function (customer, order) {
         model.addOrderToCustomer(customer, order);
-
+    },
+    editCustomerDiscount: function (customer, discount) {
+        model.editDiscount(customer, discount);
     }
 };
 
