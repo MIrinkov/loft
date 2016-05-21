@@ -177,7 +177,7 @@ var model = {
     checkOutCustomer: function (customer) {
         customer.checkOut();
     },
-    AddOrderToCustomer: function (customer,order) {
+    addOrderToCustomer: function (customer,order) {
         var index = this.customers.indexOf(customer);
         if (index > -1) {
             customer.addOrder(order);
