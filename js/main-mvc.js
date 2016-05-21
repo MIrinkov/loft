@@ -47,10 +47,10 @@ function Customer(id, name, start, discount) {
     this.name = name;
     this.id = id;
     this.start = start;
-    if(discount){
-        this.discount = parseInt(discount)/100;
+    if (discount) {
+        this.discount = parseInt(discount) / 100;
     }
-    else{
+    else {
         this.discount = 0;
     }
 
@@ -78,7 +78,7 @@ Customer.prototype = {
         }
     },
     checkOut: function () {
-        return {total:this.moneyTotal,discount:this.discountTotal};
+        return {total: this.moneyTotal, discount: this.discountTotal};
     },
     getTimeSpentSeconds: function () {
         return Math.floor(this.timeTotal / (1000));
@@ -144,7 +144,6 @@ var model = {
     },
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
-
             var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now(), obj.discount);
             this.customers.push(customer);
             localStorage.loft = JSON.stringify(this.customers);
@@ -152,6 +151,7 @@ var model = {
         else {
             console.log('Customer data validation error on creation!');
         }
+        return customer;
     },
     deleteCustomer: function (customer) {
         var index = this.customers.indexOf(customer);
@@ -177,7 +177,7 @@ var model = {
     checkOutCustomer: function (customer) {
         customer.checkOut();
     },
-    addOrderToCustomer: function (customer,order) {
+    addOrderToCustomer: function (customer, order) {
         var index = this.customers.indexOf(customer);
         if (index > -1) {
             customer.addOrder(order);
@@ -189,8 +189,12 @@ var model = {
     },
     restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
-            model.addCustomer(customer)
+            var addedCustomer = model.addCustomer(customer);
+            customer.orders.forEach(function (order) {
+                model.addOrderToCustomer(addedCustomer, order);
+            });
         });
+
     }
 
 };
@@ -294,7 +298,6 @@ var view = {
                 e.preventDefault();
                 var order = {name: orderNameInput.value, price: parseFloat(orderPriceInput.value)};
                 controller.addOrderToCustomer(customer, order);
-                view.renderDetails(customer);
                 orderForm.reset();
             }
         })(customer));
@@ -306,8 +309,8 @@ var view = {
 
     createCustomerBlock: function (customer) {
         var tr = document.createElement('tr');
-        tr.setAttribute('data-toggle','modal');
-        tr.setAttribute('data-target','#showDetailsModal');
+        tr.setAttribute('data-toggle', 'modal');
+        tr.setAttribute('data-target', '#showDetailsModal');
 
         var custName = document.createElement('td');
         custName.textContent = customer.name;
@@ -381,7 +384,8 @@ var controller = {
         model.checkOutCustomer(customer);
     },
     addOrderToCustomer: function (customer, order) {
-        model.addOrderToCustomer(customer,order);
+        model.addOrderToCustomer(customer, order);
+
     }
 };
 
