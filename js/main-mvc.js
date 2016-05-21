@@ -225,6 +225,7 @@ var view = {
         this.customerButtons = document.getElementById('customer-details-buttons');
 
         this.customerListHandles = [];
+        this.customerDetailsHandles = [];
 
         customerForm.addEventListener('submit', function (e) {
             // console.log('Add initiated from form.');
@@ -257,10 +258,33 @@ var view = {
 
     renderDetails: function (customer) {
 
+        this.customerDetailsHandles.forEach(function (handle) {
+            clearInterval(handle);
+        });
+
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
 
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal;
+
+        var timeHandle = setInterval(((function (customer) {
+            return function () {
+                if (customer.getTimeSpentSeconds() < 60) {
+                    view.customerTimeValue.textContent = customer.getTimeSpentSeconds() + ' s';
+                }
+                else {
+                    view.customerTimeValue.textContent = customer.getTimeSpentMinutes() + ' m';
+                }
+            }
+        })(customer)), 1000);
+        this.customerDetailsHandles.push(timeHandle);
+
+        var moneyHandle = setInterval(((function (customer) {
+            return function () {
+                view.customerMoneyValue.textContent = customer.moneyTotal;
+            }
+        })(customer)), 1000);
+        this.customerDetailsHandles.push(moneyHandle);
 
         this.customerButtons.innerHTML = '';
 
