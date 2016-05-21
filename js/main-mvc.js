@@ -48,7 +48,7 @@ function Customer(id, name, start, discount) {
     this.id = id;
     this.start = start;
     if (discount) {
-        this.discount = parseInt(discount) / 100;
+        this.discount = parseFloat(discount);
     }
     else {
         this.discount = 0;
@@ -96,7 +96,7 @@ Customer.prototype = {
         // e.g. 0.75 for a 25% discount
         var timeRate = 1 - this.discount;
         var totalTimeCost = (timeCost * timeRate) > STOP_CHECK ? STOP_CHECK : (timeCost * timeRate);
-        this.discountTotal = totalTimeCost - (timeCost > STOP_CHECK ? STOP_CHECK : timeCost);
+        this.discountTotal = (timeCost > STOP_CHECK ? STOP_CHECK : timeCost) - totalTimeCost;
 
         // ordersCost stores how much are the extra orders
         var ordersCost = calculateOrdersCost(this.orders);
@@ -112,6 +112,10 @@ Customer.validate = function (obj) {
     // console.log("hellooo");
     if ((!obj.name || (obj.name === '')) && (!obj.id || (!obj.id > 0))) {
         console.log('Customer name validation failed.');
+        return false;
+    }
+    if (obj.discount && obj.discount > 1) {
+        console.log('Customer discount validation failed.');
         return false;
     }
     // if ((!obj.id) || (!obj.id > 0)){
@@ -175,7 +179,7 @@ var model = {
         localStorage.loft = JSON.stringify([]);
     },
     checkOutCustomer: function (customer) {
-        customer.checkOut();
+        return customer.checkOut();
     },
     addOrderToCustomer: function (customer, order) {
         var index = this.customers.indexOf(customer);
@@ -190,6 +194,7 @@ var model = {
     restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
             var addedCustomer = model.addCustomer(customer);
+
             customer.orders.forEach(function (order) {
                 model.addOrderToCustomer(addedCustomer, order);
             });
@@ -381,7 +386,9 @@ var controller = {
         view.render();
     },
     checkOutCustomer: function (customer) {
-        model.checkOutCustomer(customer);
+        var totals = model.checkOutCustomer(customer);
+        alert('Money total: ' + totals.total + ', discount: ' + totals.discount + '.');
+
     },
     addOrderToCustomer: function (customer, order) {
         model.addOrderToCustomer(customer, order);
