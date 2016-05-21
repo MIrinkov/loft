@@ -2,22 +2,20 @@
  * Created by hlfrmn on 5/15/2016.
  */
 
-var baseMinutePrice = 2;
-var discountedMinutePrice = 1.5;
-var minutesForDiscount = 60;
+var BASE_MINUTE_PRICE = 2;
+var DISCOUNTED_MINUTE_PRICE = 1.5;
+var MINUTES_FOR_DISCOUNT = 60;
+var STOP_CHECK = 350;
 
-function getDiscount(id) {
-    return 1;
-}
 
 function calculateTimeCost(time) {
     var timeCost = 0;
-    if (time >= minutesForDiscount) {
-        time -= minutesForDiscount;
-        timeCost += minutesForDiscount * discountedMinutePrice;
+    if (time >= MINUTES_FOR_DISCOUNT) {
+        time -= MINUTES_FOR_DISCOUNT;
+        timeCost += MINUTES_FOR_DISCOUNT * DISCOUNTED_MINUTE_PRICE;
     }
 
-    timeCost += time * baseMinutePrice;
+    timeCost += time * BASE_MINUTE_PRICE;
     return parseFloat(timeCost);
 }
 
@@ -45,10 +43,16 @@ function calculateTotalCost(customer) {
 //////////////  Classes  ///////////////
 ////////////////////////////////////////
 
-function Customer(id, name, start) {
+function Customer(id, name, start, discount) {
     this.name = name;
     this.id = id;
     this.start = start;
+    if(discount){
+        this.discount = parseInt(discount);
+    }
+    else{
+        this.discount = 0;
+    }
 
     this.orders = [];
     this.timeTotal = 0;
@@ -85,7 +89,16 @@ Customer.prototype = {
         this.timeTotal = Date.now() - this.start;
     },
     updateMoney: function () {
-        this.moneyTotal = calculateTotalCost(this);
+        //timeCost stores the cost of time (without extra orders)
+        var timeCost = calculateTimeCost(this.getTimeSpentMinutes());
+        // timeRate is 1 for no discounts, less with discounts
+        // e.g. 0.75 for a 25% discount
+        var timeRate = 1 - this.discount;
+        timeCost = (timeCost * timeRate) > STOP_CHECK ? STOP_CHECK : (timeCost * timeRate);
+        // ordersCost stores how much are the extra orders
+        var ordersCost = calculateOrdersCost(this.orders);
+
+        this.moneyTotal = timeCost + ordersCost;
     },
     clearIntervals: function () {
         clearInterval(this.timeInterval);
@@ -129,7 +142,8 @@ var model = {
     },
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
-            var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now());
+
+            var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now(), obj.discount);
             this.customers.push(customer);
             localStorage.loft = JSON.stringify(this.customers);
         }
