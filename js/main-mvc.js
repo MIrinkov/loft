@@ -220,6 +220,7 @@ var view = {
 
         customerForm.addEventListener('submit', function (e) {
             // console.log('Add initiated from form.');
+            console.log(e.target.className);
             e.preventDefault();
             var obj = {
                 name: customerAddName.value,
