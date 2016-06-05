@@ -247,16 +247,42 @@ var view = {
         });
     },
 
+    clearDetails: function(customer) {
+        console.log('view.clearDetails() - To be implemented when we change to modal.');
+    },
+
     renderDetails: function (customer) {
+
+        // START CLEAR
 
         this.customerDetailsHandles.forEach(function (handle) {
             clearInterval(handle);
         });
+        this.customerButtons.innerHTML = '';
+
+        // END CLEAR
 
         this.customerNameId.textContent = customer.name + ' - ' + customer.id;
 
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
-        this.customerMoneyValue.textContent = customer.moneyTotal;
+        this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
+
+        var orderForm = document.createElement('form');
+        this.customerButtons.appendChild(orderForm);
+
+        var orderNameInput = document.createElement('input');
+        orderNameInput.type = 'text';
+        orderNameInput.placeholder = 'Order name';
+        orderForm.appendChild(orderNameInput);
+
+        var orderPriceInput = document.createElement('input');
+        orderPriceInput.type = 'number';
+        orderPriceInput.placeholder = 'Order price';
+        orderForm.appendChild(orderPriceInput);
+
+        ///////////////////////////////////////////////////////////
+        ///////////////// INTERVAL HANDLING HERE //////////////////
+        ///////////////////////////////////////////////////////////
 
         var timeHandle = setInterval(((function (customer) {
             return function () {
@@ -272,12 +298,15 @@ var view = {
 
         var moneyHandle = setInterval(((function (customer) {
             return function () {
-                view.customerMoneyValue.textContent = customer.moneyTotal;
+                view.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
             }
         })(customer)), 1000);
         this.customerDetailsHandles.push(moneyHandle);
 
-        this.customerButtons.innerHTML = '';
+
+        //////////////////////////////////////////////////////////////
+        ///////////////////  BUTTONS CREATION HERE ///////////////////
+        //////////////////////////////////////////////////////////////
 
         var checkoutBtn = document.createElement('button');
         checkoutBtn.type = 'button';
@@ -296,19 +325,6 @@ var view = {
                 controller.deleteCustomer(customer);
             }
         })(customer));
-
-        var orderForm = document.createElement('form');
-        this.customerButtons.appendChild(orderForm);
-
-        var orderNameInput = document.createElement('input');
-        orderNameInput.type = 'text';
-        orderNameInput.placeholder = 'Order name';
-        orderForm.appendChild(orderNameInput);
-
-        var orderPriceInput = document.createElement('input');
-        orderPriceInput.type = 'number';
-        orderPriceInput.placeholder = 'Order price';
-        orderForm.appendChild(orderPriceInput);
 
         var orderSubmitBtn = document.createElement('button');
         orderSubmitBtn.type = 'submit';
@@ -369,10 +385,10 @@ var view = {
         this.customerListHandles.push(timeHandle);
 
         var custMoney = document.createElement('td');
-        custMoney.textContent = customer.moneyTotal;
+        custMoney.textContent = customer.moneyTotal.toFixed(2);
         var moneyHandle = setInterval(((function (customer) {
             return function () {
-                custMoney.textContent = customer.moneyTotal;
+                custMoney.textContent = customer.moneyTotal.toFixed(2);
             }
         })(customer)), 1000);
         this.customerListHandles.push(moneyHandle);
@@ -407,6 +423,7 @@ var controller = {
     },
     deleteCustomer: function (customer) {
         model.deleteCustomer(customer);
+        view.clearDetails();
         view.render();
     },
     getAllCustomers: function () {
