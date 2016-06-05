@@ -331,7 +331,7 @@ var view = {
         var checkoutBtn = document.createElement('button');
         checkoutBtn.type = 'button';
         checkoutBtn.textContent = 'Checkout';
-        checkoutBtn.className = 'btn';
+        checkoutBtn.className = 'btn btn-default';
         checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.checkOutCustomer(customer);
@@ -341,17 +341,19 @@ var view = {
         var deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'btn';
+        deleteBtn.className = 'btn btn-default';
+        deleteBtn.setAttribute('data-dismiss', 'modal');
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
             }
         })(customer));
 
+
         var orderSubmitBtn = document.createElement('button');
         orderSubmitBtn.type = 'submit';
         orderSubmitBtn.textContent = 'Add order';
-        orderSubmitBtn.className = 'btn';
+        orderSubmitBtn.className = 'btn btn-default';
         orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
@@ -364,7 +366,7 @@ var view = {
         var editDiscountBtn = document.createElement('button');
         editDiscountBtn.type = 'button';
         editDiscountBtn.textContent = 'Discount';
-        editDiscountBtn.className = 'btn';
+        editDiscountBtn.className = 'btn btn-default';
         editDiscountBtn.addEventListener('click', (function (customer) {
             return function () {
                 var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
@@ -447,7 +449,6 @@ var controller = {
     },
     deleteCustomer: function (customer) {
         model.deleteCustomer(customer);
-        view.clearDetails();
         view.render();
     },
     getAllCustomers: function () {
