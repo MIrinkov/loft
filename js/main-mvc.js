@@ -126,6 +126,9 @@ Customer.validate.order = function(obj){
     return true;
 }
 
+Customer.validate.discount = function(discount){
+    return !(isNaN(discount) || discount > 1 || discount < 0);
+}
 
 //////////////////////////  MVC  //////////////////////////////
 
@@ -203,7 +206,9 @@ var model = {
         });
     },
     editDiscount: function (customer, discount) {
-        customer.discount = parseFloat(discount);
+        if (Customer.validate.discount(parseFloat(discount))) {
+            customer.discount = parseFloat(discount);
+        }
     }
 };
 
