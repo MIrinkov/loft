@@ -118,6 +118,7 @@ Customer.validate.order = function(obj){
         console.log('Order validation failed: name error');
         return false;
     }
+    console.log('Price:',obj.price);
     if (!obj.price || isNan(obj.price)){
         console.log('Order validation failed: price error');
         return false;
