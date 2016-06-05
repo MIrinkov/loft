@@ -119,13 +119,16 @@ Customer.validate.order = function(obj){
         return false;
     }
     console.log('Price:',obj.price);
-    if (!obj.price || isNan(obj.price)){
+    if (!obj.price || isNaN(obj.price)){
         console.log('Order validation failed: price error');
         return false;
     }
     return true;
 }
 
+Customer.validate.discount = function(discount){
+    return !(isNaN(discount) || discount > 1 || discount < 0);
+}
 
 //////////////////////////  MVC  //////////////////////////////
 
@@ -203,7 +206,9 @@ var model = {
         });
     },
     editDiscount: function (customer, discount) {
-        customer.discount = parseFloat(discount);
+        if (Customer.validate.discount(parseFloat(discount))) {
+            customer.discount = parseFloat(discount);
+        }
     }
 };
 
@@ -260,10 +265,6 @@ var view = {
         });
     },
 
-    clearDetails: function(customer) {
-        console.log('view.clearDetails() - To be implemented when we change to modal.');
-    },
-
     renderDetails: function (customer) {
 
         // START CLEAR
@@ -280,8 +281,15 @@ var view = {
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
 
+        try {
+            var oldOrderForm = document.getElementById('add-order-form');
+            this.customerDetails.removeChild(oldOrderForm);
+        } catch (e) {
+
+        }
         var orderForm = document.createElement('form');
-        this.customerButtons.appendChild(orderForm);
+        orderForm.id = 'add-order-form';
+        this.customerDetails.appendChild(orderForm);
 
         var orderNameInput = document.createElement('input');
         orderNameInput.type = 'text';
@@ -289,7 +297,6 @@ var view = {
         orderForm.appendChild(orderNameInput);
 
         var orderPriceInput = document.createElement('input');
-        orderPriceInput.type = 'number';
         orderPriceInput.placeholder = 'Order price';
         orderForm.appendChild(orderPriceInput);
 
@@ -324,6 +331,7 @@ var view = {
         var checkoutBtn = document.createElement('button');
         checkoutBtn.type = 'button';
         checkoutBtn.textContent = 'Checkout';
+        checkoutBtn.className = 'btn';
         checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.checkOutCustomer(customer);
@@ -333,6 +341,7 @@ var view = {
         var deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'Delete';
+        deleteBtn.className = 'btn';
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
@@ -342,6 +351,7 @@ var view = {
         var orderSubmitBtn = document.createElement('button');
         orderSubmitBtn.type = 'submit';
         orderSubmitBtn.textContent = 'Add order';
+        orderSubmitBtn.className = 'btn';
         orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
@@ -354,6 +364,7 @@ var view = {
         var editDiscountBtn = document.createElement('button');
         editDiscountBtn.type = 'button';
         editDiscountBtn.textContent = 'Discount';
+        editDiscountBtn.className = 'btn';
         editDiscountBtn.addEventListener('click', (function (customer) {
             return function () {
                 var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
