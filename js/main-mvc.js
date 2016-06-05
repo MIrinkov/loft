@@ -113,6 +113,18 @@ Customer.validate = function (obj) {
     return true;
 };
 
+Customer.validate.order = function(obj){
+    if (!obj.name || obj.name === ''){
+        console.log('Order validation failed: name error');
+        return false;
+    }
+    if (!obj.price || isNan(obj.price)){
+        console.log('Order validation failed: price error');
+        return false;
+    }
+    return true;
+}
+
 
 //////////////////////////  MVC  //////////////////////////////
 
@@ -171,12 +183,12 @@ var model = {
     },
     addOrderToCustomer: function (customer, order) {
         var index = this.customers.indexOf(customer);
-        if (index > -1) {
+        if (index < 0) {
+            console.log('Add order error: customer not in the list!');
+        }
+        if (Customer.validate.order(order)){
             customer.addOrder(order);
             localStorage.loft = JSON.stringify(this.customers);
-        }
-        else {
-            console.log('Add order error: customer not in the list!');
         }
     },
     restoreFromBackup: function (backup) {
