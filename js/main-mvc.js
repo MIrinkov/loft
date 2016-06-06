@@ -98,7 +98,6 @@ Customer.prototype = {
 };
 
 Customer.validate = function (obj) {
-    // console.log("hellooo");
     if ((!obj.name || (obj.name === '')) && (!obj.id || (!obj.id > 0))) {
         console.log('Customer name validation failed.');
         return false;
@@ -120,7 +119,6 @@ Customer.validate.order = function(obj){
         console.log('Order validation failed: name error');
         return false;
     }
-    console.log('Price:',obj.price);
     if (!obj.price || isNaN(obj.price)){
         console.log('Order validation failed: price error');
         return false;
@@ -335,9 +333,10 @@ var view = {
         //////////////////////////////////////////////////////////////
 
         var checkoutBtn = document.getElementById('customer-details-checkout-btn');
+        var oldText = checkoutBtn.textContent
         checkoutBtn.parentNode.replaceChild(checkoutBtn.cloneNode(),checkoutBtn);
         var checkoutBtn = document.getElementById('customer-details-checkout-btn');
-        checkoutBtn.textContent = 'Checkout';
+        checkoutBtn.textContent = oldText;
         checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.checkOutCustomer(customer);
@@ -345,9 +344,10 @@ var view = {
         })(customer));
 
         var deleteBtn = document.getElementById('customer-details-delete-btn');
+        oldText = deleteBtn.textContent;
         deleteBtn.parentNode.replaceChild(deleteBtn.cloneNode(),deleteBtn);
         var deleteBtn = document.getElementById('customer-details-delete-btn');
-        deleteBtn.textContent = 'Delete';
+        deleteBtn.textContent = oldText;
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
@@ -356,9 +356,10 @@ var view = {
 
 
         var orderSubmitBtn = document.getElementById('add-order-form-btn');
+        oldText = orderSubmitBtn.textContent;
         orderSubmitBtn.parentNode.replaceChild(orderSubmitBtn.cloneNode(),orderSubmitBtn);
         var orderSubmitBtn = document.getElementById('add-order-form-btn');
-        orderSubmitBtn.textContent = 'Add order';
+        orderSubmitBtn.textContent = oldText;
         orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
@@ -369,9 +370,10 @@ var view = {
         })(customer));
 
         var editDiscountBtn = document.getElementById('customer-details-discount-btn');
+        oldText = editDiscountBtn.textContent;
         editDiscountBtn.parentNode.replaceChild(editDiscountBtn.cloneNode(),editDiscountBtn);
         var editDiscountBtn = document.getElementById('customer-details-discount-btn');
-        editDiscountBtn.textContent = 'Discount';
+        editDiscountBtn.textContent = oldText;
         editDiscountBtn.addEventListener('click', (function (customer) {
             return function () {
                 var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
@@ -521,18 +523,6 @@ var controller = {
         return model.getOrders(customer);
     }
 };
-
-function test() {
-    setTimeout(function () {
-        controller.addCustomer({name: 'pavel', id: 321})
-    }, 1000);
-    setTimeout(function () {
-        controller.addCustomer({name: 'jay', id: 123})
-    }, 8 * 1000);
-    setTimeout(function () {
-        controller.addCustomer({name: 'amir', id: 666})
-    }, 13 * 1000);
-}
 
 
 controller.init();
