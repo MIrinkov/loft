@@ -237,8 +237,6 @@ var view = {
         this.customerDetailsHandles = [];
 
         customerForm.addEventListener('submit', function (e) {
-            // console.log('Add initiated from form.');
-            console.log(e.target.className);
             e.preventDefault();
             var obj = {
                 name: customerAddName.value,
@@ -281,24 +279,9 @@ var view = {
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
 
-        try {
-            var oldOrderForm = document.getElementById('add-order-form');
-            this.customerDetails.removeChild(oldOrderForm);
-        } catch (e) {
-
-        }
-        var orderForm = document.createElement('form');
-        orderForm.id = 'add-order-form';
-        this.customerDetails.appendChild(orderForm);
-
-        var orderNameInput = document.createElement('input');
-        orderNameInput.type = 'text';
-        orderNameInput.placeholder = 'Order name';
-        orderForm.appendChild(orderNameInput);
-
-        var orderPriceInput = document.createElement('input');
-        orderPriceInput.placeholder = 'Order price';
-        orderForm.appendChild(orderPriceInput);
+        var orderForm = document.getElementById('add-order-form');
+        var orderNameInput = document.getElementById('add-order-form-name');
+        var orderPriceInput = document.getElementById('add-order-form-price');
 
         ///////////////////////////////////////////////////////////
         ///////////////// INTERVAL HANDLING HERE //////////////////
@@ -341,7 +324,7 @@ var view = {
         var deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'btn btn-default';
+        deleteBtn.className = 'btn btn-default btn-danger';
         deleteBtn.setAttribute('data-dismiss', 'modal');
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
@@ -350,10 +333,10 @@ var view = {
         })(customer));
 
 
-        var orderSubmitBtn = document.createElement('button');
-        orderSubmitBtn.type = 'submit';
+        var orderSubmitBtn = document.getElementById('add-order-form-btn');
+        orderSubmitBtn.parentNode.replaceChild(orderSubmitBtn.cloneNode(),orderSubmitBtn);
+        var orderSubmitBtn = document.getElementById('add-order-form-btn');
         orderSubmitBtn.textContent = 'Add order';
-        orderSubmitBtn.className = 'btn btn-default';
         orderSubmitBtn.addEventListener('click', (function (customer) {
             return function (e) {
                 e.preventDefault();
@@ -374,10 +357,8 @@ var view = {
             }
         })(customer));
 
-
         this.customerButtons.appendChild(checkoutBtn);
         this.customerButtons.appendChild(deleteBtn);
-        this.customerButtons.appendChild(orderSubmitBtn);
         this.customerButtons.appendChild(editDiscountBtn);
     },
 
