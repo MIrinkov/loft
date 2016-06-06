@@ -56,7 +56,7 @@ Customer.prototype = {
     addOrder: function (orderObj) {
         this.orders.push(orderObj);
     },
-    removeOrder: function (order) {
+    deleteOrder: function (order) {
         var index = this.orders.indexOf(order);
         if (index > -1) {
             this.orders.splice(index, 1);
@@ -185,7 +185,7 @@ var model = {
     checkOutCustomer: function (customer) {
         return customer.checkOut();
     },
-    addOrderToCustomer: function (customer, order) {
+    addOrder: function (customer, order) {
         var index = this.customers.indexOf(customer);
         if (index < 0) {
             console.log('Add order error: customer not in the list!');
@@ -199,7 +199,7 @@ var model = {
         backup.forEach(function (customer) {
             var addedCustomer = model.addCustomer(customer);
             customer.orders.forEach(function (order) {
-                model.addOrderToCustomer(addedCustomer, order);
+                model.addOrder(addedCustomer, order);
             });
             addedCustomer.updateTime();
             addedCustomer.updateMoney();
@@ -209,6 +209,9 @@ var model = {
         if (Customer.validate.discount(parseFloat(discount))) {
             customer.discount = parseFloat(discount);
         }
+    },
+    getOrders: function (customer) {
+        return customer.orders;
     }
 };
 
@@ -228,10 +231,12 @@ var view = {
         this.customerList = document.getElementById('customer-list');
         // The details view
         this.customerDetails = document.getElementById('customer-details');
-        this.customerNameId = document.getElementById('customer-name-id');
+        this.customerDetailsName = document.getElementById('customer-details-name');
+        this.customerDetailsId = document.getElementById('customer-details-id');
         this.customerTimeValue = document.getElementById('customer-time-value');
         this.customerMoneyValue = document.getElementById('customer-money-value');
         this.customerButtons = document.getElementById('customer-details-buttons');
+        this.customerDetailsOrderList = document.getElementById('order-list');
 
         this.customerListHandles = [];
         this.customerDetailsHandles = [];
@@ -273,7 +278,8 @@ var view = {
 
         // END CLEAR
 
-        this.customerNameId.textContent = customer.name + ' - ' + customer.id;
+        this.customerDetailsId.textContent = customer.id;
+        this.customerDetailsName.textContent = customer.name;
 
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
         this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
@@ -354,6 +360,29 @@ var view = {
                 controller.editCustomerDiscount(customer, newDiscount);
             }
         })(customer));
+
+        ///////////////////////////////////////////////////////////////
+        ///////////////// ORDER TABLE CONSTRUCTION ////////////////////
+        ///////////////////////////////////////////////////////////////
+        this.customerDetailsOrderList.innerHTML = '';
+        controller.getCustomerOrders(customer).forEach(function(order){
+            view.createOrderBlock(order);
+        });
+
+    },
+
+    createOrderBlock: function (order) {
+        var tr = document.createElement('tr');
+
+        var orderName = document.createElement('td');
+        orderName.textContent = order.name;
+        var orderPrice = document.createElement('td');
+        orderPrice.textContent = order.price.toFixed(2);
+
+        tr.appendChild(orderName);
+        tr.appendChild(orderPrice);
+
+        this.customerDetailsOrderList.appendChild(tr);
     },
 
     createCustomerBlock: function (customer) {
@@ -439,10 +468,14 @@ var controller = {
 
     },
     addOrderToCustomer: function (customer, order) {
-        model.addOrderToCustomer(customer, order);
+        model.addOrder(customer, order);
+        view.renderDetails(customer);
     },
     editCustomerDiscount: function (customer, discount) {
         model.editDiscount(customer, discount);
+    },
+    getCustomerOrders: function (customer) {
+        return model.getOrders(customer);
     }
 };
 
