@@ -270,7 +270,6 @@ var view = {
         this.customerDetailsHandles.forEach(function (handle) {
             clearInterval(handle);
         });
-        this.customerButtons.innerHTML = '';
 
         // END CLEAR
 
