@@ -60,6 +60,8 @@
               <p></p>
               <div id="customer-details">
                 <h2 id="customer-name-id"></h2>
+                <h2 id="customer-name"></h2>
+                <h2 id="customer-id"></h2>
                 <div id="customer-time">
         <!--             Time total: -->
                     <span id="customer-time-value"></span>
@@ -70,6 +72,11 @@
                 </div>
                 <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
                 </div>
+                <form class="form-inline" id="order-add-form">
+                  <div class="form-group" id="add-order-form-name"></div>
+                  <div class="form-group" id="add-order-form-price"></div>
+                  <button type="submit" class="btn btn-default" id="add-order-form-btn">Add order</button>
+                </form>
               </div>
             </div>
             <div class="modal-footer">
@@ -80,21 +87,21 @@
         </div>
       </div>
   
-<audio id="audio">
- <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
-</audio>
-<button id="button">Play</button>
-<script>
-  
-  var button = document.getElementById('button');
-var audio = document.getElementById('audio');
+      <audio id="audio">
+       <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
+      </audio>
+      <button id="button">Play</button>
+      <script>
+        
+        var button = document.getElementById('button');
+        var audio = document.getElementById('audio');
 
-var onClick = function() {
-    audio.play(); // audio will load and then play
-};
+        var onClick = function() {
+            audio.play(); // audio will load and then play
+        };
 
-button.addEventListener('click', onClick, false);
-</script>
+        button.addEventListener('click', onClick, false);
+      </script>
 
   </section>
 
