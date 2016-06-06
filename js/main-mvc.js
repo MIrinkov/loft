@@ -311,21 +311,20 @@ var view = {
         ///////////////////  BUTTONS CREATION HERE ///////////////////
         //////////////////////////////////////////////////////////////
 
-        var checkoutBtn = document.createElement('button');
-        checkoutBtn.type = 'button';
+        var checkoutBtn = document.getElementById('customer-details-checkout-btn');
+        checkoutBtn.parentNode.replaceChild(checkoutBtn.cloneNode(),checkoutBtn);
+        var checkoutBtn = document.getElementById('customer-details-checkout-btn');
         checkoutBtn.textContent = 'Checkout';
-        checkoutBtn.className = 'btn btn-default';
         checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.checkOutCustomer(customer);
             }
         })(customer));
 
-        var deleteBtn = document.createElement('button');
-        deleteBtn.type = 'button';
+        var deleteBtn = document.getElementById('customer-details-delete-btn');
+        deleteBtn.parentNode.replaceChild(deleteBtn.cloneNode(),deleteBtn);
+        var deleteBtn = document.getElementById('customer-details-delete-btn');
         deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'btn btn-default btn-danger';
-        deleteBtn.setAttribute('data-dismiss', 'modal');
         deleteBtn.addEventListener('click', (function (customer) {
             return function () {
                 controller.deleteCustomer(customer);
@@ -346,20 +345,16 @@ var view = {
             }
         })(customer));
 
-        var editDiscountBtn = document.createElement('button');
-        editDiscountBtn.type = 'button';
+        var editDiscountBtn = document.getElementById('customer-details-discount-btn');
+        editDiscountBtn.parentNode.replaceChild(editDiscountBtn.cloneNode(),editDiscountBtn);
+        var editDiscountBtn = document.getElementById('customer-details-discount-btn');
         editDiscountBtn.textContent = 'Discount';
-        editDiscountBtn.className = 'btn btn-default';
         editDiscountBtn.addEventListener('click', (function (customer) {
             return function () {
                 var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
                 controller.editCustomerDiscount(customer, newDiscount);
             }
         })(customer));
-
-        this.customerButtons.appendChild(checkoutBtn);
-        this.customerButtons.appendChild(deleteBtn);
-        this.customerButtons.appendChild(editDiscountBtn);
     },
 
     createCustomerBlock: function (customer) {
