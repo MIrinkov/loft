@@ -98,7 +98,7 @@ Customer.prototype = {
 };
 
 Customer.validate = function (obj) {
-    if ((!obj.name || (obj.name === '')) && (!obj.id || (!obj.id > 0))) {
+    if ((!obj.name || obj.name === '') && (!obj.id || !obj.id > 0)) {
         console.log('Customer name validation failed.');
         return false;
     }
@@ -311,10 +311,10 @@ var view = {
         var timeHandle = setInterval(((function (customer) {
             return function () {
                 if (customer.getTimeSpentSeconds() < 60) {
-                    view.customerTimeValue.textContent = customer.getTimeSpentSeconds() + ' s';
+                    view.customerTimeValue.textContent = customer.getTimeSpentSeconds() + ' с';
                 }
                 else {
-                    view.customerTimeValue.textContent = customer.getTimeSpentMinutes() + ' m';
+                    view.customerTimeValue.textContent = customer.getTimeSpentMinutes() + ' м';
                 }
             }
         })(customer)), 1000);
