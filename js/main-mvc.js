@@ -376,7 +376,7 @@ var view = {
         editDiscountBtn.textContent = oldText;
         editDiscountBtn.addEventListener('click', (function (customer) {
             return function () {
-                var newDiscount = parseFloat(parseInt(prompt('New discount percentage'))/100);
+                var newDiscount = parseFloat(parseInt(prompt('Новый размер скидки в процентах'))/100);
                 controller.editCustomerDiscount(customer, newDiscount);
             }
         })(customer));
@@ -502,7 +502,7 @@ var controller = {
     },
     checkOutCustomer: function (customer) {
         var totals = model.checkOutCustomer(customer);
-        alert('Money total: ' + totals.total + ', discount: ' + totals.discount + '.');
+        alert('Итого: ' + totals.total + ', с учетом скидки: ' + totals.discount + '.');
 
     },
     addCustomerOrder: function (customer, order) {
