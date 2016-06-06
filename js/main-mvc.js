@@ -490,8 +490,10 @@ var controller = {
         view.render();
     },
     deleteCustomer: function (customer) {
-        model.deleteCustomer(customer);
-        view.render();
+        if(confirm('Подтвердите удаление посетителя.')){
+            model.deleteCustomer(customer);
+            view.render();
+        }
     },
     getAllCustomers: function () {
         return model.getAllCustomers();
