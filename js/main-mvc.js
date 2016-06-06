@@ -435,18 +435,18 @@ var view = {
 
         var custTime = document.createElement('td');
         if (customer.getTimeSpentSeconds() < 60) {
-            custTime.textContent = customer.getTimeSpentSeconds() + ' s';
+            custTime.textContent = customer.getTimeSpentSeconds() + ' с';
         }
         else {
-            custTime.textContent = customer.getTimeSpentMinutes() + ' m';
+            custTime.textContent = customer.getTimeSpentMinutes() + ' м';
         }
         var timeHandle = setInterval(((function (customer) {
             return function () {
                 if (customer.getTimeSpentSeconds() < 60) {
-                    custTime.textContent = customer.getTimeSpentSeconds() + ' s';
+                    custTime.textContent = customer.getTimeSpentSeconds() + ' с';
                 }
                 else {
-                    custTime.textContent = customer.getTimeSpentMinutes() + ' m';
+                    custTime.textContent = customer.getTimeSpentMinutes() + ' м';
                 }
             }
         })(customer)), 1000);
