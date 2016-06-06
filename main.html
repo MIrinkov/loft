@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Loft cafe</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Loft cafe</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
+
 <body>
   <div class="jumbotron">
     <div class="container text-center">
@@ -26,102 +28,92 @@
       <div class="form-group">
         <input class="form-control input-lg" id="customer-add-discount" placeholder="discount %">
       </div>
-        <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Add Customer</button>
+      <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Add Customer</button>
     </form>
-
     <div style="margin:50px"></div>
-
     <div class="container">
       <table class="table table-hover">
-         <thead>
-            <tr>
-                <th>Name</th>
-                <th>ID</th>
-                <th>Time</th>
-                <th>Money</th>
-            </tr>
-         </thead>
-         <tbody id="customer-list">
-         </tbody>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Time</th>
+            <th>Money</th>
+          </tr>
+        </thead>
+        <tbody id="customer-list">
+        </tbody>
       </table>
     </div>
-
-      <!-- Modal -->
-      <div class="modal fade" id="showDetailsModal" role="dialog">
-        <div class="modal-dialog">
-        
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Customer details</h4>
-            </div>
-            <div class="modal-body">
-              <div id="customer-details">
-                <h2 id="customer-details-name"></h2>
-                <h2 id="customer-details-id"></h2>
-                <div id="customer-time">
-        <!--             Time total: -->
-                    <span id="customer-time-value"></span>
-                </div>
-                <div id="customer-money">
-                    <!-- Money total: -->
-                    <span id="customer-money-value"></span>
-                </div>
-                <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
-                  <button type="button" class="btn btn-default" id="customer-details-checkout-btn">Checkout</button>
-                  <button type="button" class="btn btn-default" id="customer-details-delete-btn" data-dismiss="modal">Delete</button>
-                  <button type="button" class="btn btn-default" id="customer-details-discount-btn">Discount</button>
-                </div>
-
-                <form class="form-inline" id="add-order-form">
-                  <div class="form-group">
-                    <input type="text" class="form-control input-md" placeholder="Order" id="add-order-form-name">
-                  </div>
-                  <div class="form-group">
-                    <input placeholder="Order price" class="form-control input-md" id="add-order-form-price">
-                  </div>
-                  <button type="submit" class="btn btn-default" id="add-order-form-btn">Add order</button>
-                </form>
-                  <table class="table table-hover">
-                     <thead>
-                        <tr>
-                          <th>Order</th>
-                          <th>Price</th>
-                        </tr>
-                     </thead>
-                     <tbody id="order-list">
-                     </tbody>
-                  </table>
+    <!-- Modal -->
+    <div class="modal fade" id="showDetailsModal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Customer details</h4>
+          </div>
+          <div class="modal-body">
+            <div id="customer-details">
+              <h2 id="customer-details-name"></h2>
+              <h2 id="customer-details-id"></h2>
+              <div id="customer-time">
+                <!--             Time total: -->
+                <span id="customer-time-value"></span>
               </div>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <div id="customer-money">
+                <!-- Money total: -->
+                <span id="customer-money-value"></span>
+              </div>
+              <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
+                <button type="button" class="btn btn-default" id="customer-details-checkout-btn">Checkout</button>
+                <button type="button" class="btn btn-default" id="customer-details-delete-btn" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-default" id="customer-details-discount-btn">Discount</button>
+              </div>
+              <form class="form-inline" id="add-order-form">
+                <div class="form-group">
+                  <input type="text" class="form-control input-md" placeholder="Order" id="add-order-form-name">
+                </div>
+                <div class="form-group">
+                  <input placeholder="Order price" class="form-control input-md" id="add-order-form-price">
+                </div>
+                <button type="submit" class="btn btn-default" id="add-order-form-btn">Add order</button>
+              </form>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody id="order-list">
+                </tbody>
+              </table>
             </div>
           </div>
-          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
-  
-      <audio id="audio">
-       <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
-      </audio>
-      <img src="https://www.dropbox.com/s/ha3dcheb1pq4pqi/12221.png?dl=1" id="button">
-      <script>
-        
-        var button = document.getElementById('button');
-        var audio = document.getElementById('audio');
+    </div>
+    <audio id="audio">
+      <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
+    </audio>
+    <img src="https://www.dropbox.com/s/ha3dcheb1pq4pqi/12221.png?dl=1" id="button">
+    <script>
+    var button = document.getElementById('button');
+    var audio = document.getElementById('audio');
 
-        var onClick = function() {
-            audio.play(); // audio will load and then play
-        };
+    var onClick = function() {
+      audio.play(); // audio will load and then play
+    };
 
-        button.addEventListener('click', onClick, false);
-      </script>
-
+    button.addEventListener('click', onClick, false);
+    </script>
   </section>
-
   <script src="js/main-mvc.js"></script>
 </body>
+
 </html>
