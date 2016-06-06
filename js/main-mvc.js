@@ -7,6 +7,7 @@ var DISCOUNTED_MINUTE_PRICE = 1.5;
 var MINUTES_FOR_DISCOUNT = 60;
 var STOP_CHECK = 350;
 
+var priceList = document.getElementById('price-list-form');
 
 function calculateTimeCost(time) {
     var timeCost = 0;
@@ -299,7 +300,7 @@ var view = {
         this.customerDetailsName.textContent = customer.name;
 
         this.customerTimeValue.textContent = customer.getTimeSpentMinutes();
-        this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
+        this.customerMoneyValue.textContent = customer.moneyTotal.toFixed(0) + ' ₽';
 
         var orderForm = document.getElementById('add-order-form');
         var orderNameInput = document.getElementById('add-order-form-name');
@@ -323,7 +324,7 @@ var view = {
 
         var moneyHandle = setInterval(((function (customer) {
             return function () {
-                view.customerMoneyValue.textContent = customer.moneyTotal.toFixed(2);
+                view.customerMoneyValue.textContent = customer.moneyTotal.toFixed(0) + ' ₽';
             }
         })(customer)), 1000);
         this.customerDetailsHandles.push(moneyHandle);
@@ -362,7 +363,7 @@ var view = {
             return function (e) {
                 e.preventDefault();
                 var order = {name: orderNameInput.value, price: parseFloat(orderPriceInput.value)};
-                controller.addOrderToCustomer(customer, order);
+                controller.addCustomerOrder(customer, order);
                 orderForm.reset();
             }
         })(customer));
@@ -394,7 +395,7 @@ var view = {
         var orderName = document.createElement('td');
         orderName.textContent = order.name;
         var orderPrice = document.createElement('td');
-        orderPrice.textContent = order.price.toFixed(2);
+        orderPrice.textContent = order.price.toFixed(0) + ' ₽';
         var orderDeleteBtn = document.createElement('button');
         orderDeleteBtn.className = 'btn btn-danger btn-sm';
 
@@ -417,7 +418,6 @@ var view = {
                 controller.deleteCustomerOrder(customer,order);
             }
         }(order,customer)));
-
 
     },
 
@@ -451,10 +451,10 @@ var view = {
         this.customerListHandles.push(timeHandle);
 
         var custMoney = document.createElement('td');
-        custMoney.textContent = customer.moneyTotal.toFixed(2);
+        custMoney.textContent = customer.moneyTotal.toFixed(0) + ' ₽';
         var moneyHandle = setInterval(((function (customer) {
             return function () {
-                custMoney.textContent = customer.moneyTotal.toFixed(2);
+                custMoney.textContent = customer.moneyTotal.toFixed(0) + ' ₽';
             }
         })(customer)), 1000);
         this.customerListHandles.push(moneyHandle);
@@ -503,8 +503,11 @@ var controller = {
         alert('Money total: ' + totals.total + ', discount: ' + totals.discount + '.');
 
     },
-    addOrderToCustomer: function (customer, order) {
+    addCustomerOrder: function (customer, order) {
         model.addOrder(customer, order);
+        if (order.price == 400){
+            // placeholder for audio easter egg
+        }
         view.renderDetails(customer);
     },
     deleteCustomerOrder: function (customer, order) {
