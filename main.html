@@ -11,6 +11,7 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 
+
 <body>
   <div class="jumbotron">
     <div class="container text-center">
@@ -69,19 +70,19 @@
                 <!-- Money total: -->
                 <span id="customer-money-value"></span>
               </div>
-              <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
-                <button type="button" class="btn btn-default" id="customer-details-checkout-btn">Рассчитать</button>
-                <button type="button" class="btn btn-default btn-md" id="customer-details-delete-btn" data-dismiss="modal">Удалить</button>
-                <button type="button" class="btn btn-default" id="customer-details-discount-btn">Добавить скидку</button>
+              <div style="margin:10px 0;" role="group" id="customer-details-buttons">
+                <button type="button" class="btn btn-info btn-block" id="customer-details-checkout-btn">Рассчитать</button>
+                <button type="button" class="btn btn-info btn-block" id="customer-details-discount-btn">Добавить скидку</button>
+                <button type="button" class="btn btn-danger btn-block" id="customer-details-delete-btn" data-dismiss="modal">Удалить</button>
               </div>
-              <form class="form-inline" id="add-order-form">
+              <form class="form" id="add-order-form">
                 <div class="form-group">
-                  <input type="text" class="form-control input-md" placeholder="Order" id="add-order-form-name">
+                  <input type="text" class="form-control input-md" placeholder="Заказ" id="add-order-form-name">
                 </div>
                 <div class="form-group">
-                  <input placeholder="Order price" class="form-control input-md" id="add-order-form-price">
+                  <input placeholder="Цена" class="form-control input-md" id="add-order-form-price">
                 </div>
-                <button type="submit" class="btn btn-default" id="add-order-form-btn">Добавить заказ</button>
+                <button type="submit" class="btn btn-success btn-block" id="add-order-form-btn">Добавить заказ</button>
               </form>
               <table class="table table-hover">
                 <thead>
@@ -97,7 +98,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
           </div>
         </div>
       </div>
