@@ -20,28 +20,28 @@
   <section>
     <form id="customer-add-form" class="form-inline text-center">
       <div class="form-group">
-        <input type="text" class="form-control input-lg" id="customer-add-name" placeholder="имя" autofocus>
+        <input type="text" class="form-control input-lg" id="customer-add-name" placeholder="Имя" autofocus>
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-id" placeholder="номер">
+        <input class="form-control input-lg" id="customer-add-id" placeholder="Номер">
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-discount" placeholder="скидка в процентах">
+        <input class="form-control input-lg" id="customer-add-discount" placeholder="Скидка в процентах">
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-discount-min" placeholder="скидка в минутах">
+        <input class="form-control input-lg" id="customer-add-discount-min" placeholder="Скидка в минутах">
       </div>
-      <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Add Customer</button>
+      <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
     </form>
     <div style="margin:50px"></div>
     <div class="container">
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>ID</th>
-            <th>Time</th>
-            <th>Money</th>
+            <th>Имя</th>
+            <th>Номер</th>
+            <th>Время</th>
+            <th>Бабосики</th>
           </tr>
         </thead>
         <tbody id="customer-list">
@@ -55,7 +55,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Customer details</h4>
+            <h4 class="modal-title">Информация о посетителе</h4>
           </div>
           <div class="modal-body">
             <div id="customer-details">
@@ -70,9 +70,9 @@
                 <span id="customer-money-value"></span>
               </div>
               <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
-                <button type="button" class="btn btn-default" id="customer-details-checkout-btn">Checkout</button>
-                <button type="button" class="btn btn-default" id="customer-details-delete-btn" data-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-default" id="customer-details-discount-btn">Discount</button>
+                <button type="button" class="btn btn-default" id="customer-details-checkout-btn">Рассчитать</button>
+                <button type="button" class="btn btn-default btn-md" id="customer-details-delete-btn" data-dismiss="modal">Удалить</button>
+                <button type="button" class="btn btn-default" id="customer-details-discount-btn">Добавить скидку</button>
               </div>
               <form class="form-inline" id="add-order-form">
                 <div class="form-group">
@@ -81,13 +81,14 @@
                 <div class="form-group">
                   <input placeholder="Order price" class="form-control input-md" id="add-order-form-price">
                 </div>
-                <button type="submit" class="btn btn-default" id="add-order-form-btn">Add order</button>
+                <button type="submit" class="btn btn-default" id="add-order-form-btn">Добавить заказ</button>
               </form>
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th>Order</th>
-                    <th>Price</th>
+                    <th>Заказ</th>
+                    <th>Цена</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="order-list">
