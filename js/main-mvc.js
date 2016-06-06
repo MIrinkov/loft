@@ -151,6 +151,7 @@ var model = {
             model.restoreFromBackup(backup);
         }
     },
+
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
             var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now(), obj.discount);
@@ -163,6 +164,7 @@ var model = {
         }
         return customer;
     },
+
     deleteCustomer: function (customer) {
         var index = this.customers.indexOf(customer);
         if (index > -1) {
@@ -174,9 +176,11 @@ var model = {
             console.log('Deletion error: customer not in the list!');
         }
     },
+
     getAllCustomers: function () {
         return this.customers;
     },
+
     deleteAllCustomers: function () {
         this.customers.forEach(function (customer) {
             customer.clearIntervals();
@@ -184,9 +188,11 @@ var model = {
         this.customers.length = 0;
         localStorage.loft = JSON.stringify([]);
     },
+
     checkOutCustomer: function (customer) {
         return customer.checkOut();
     },
+
     addOrder: function (customer, order) {
         var index = this.customers.indexOf(customer);
         if (index < 0) {
@@ -197,6 +203,12 @@ var model = {
             localStorage.loft = JSON.stringify(this.customers);
         }
     },
+
+    deleteOrder: function (customer, order) {
+        customer.deleteOrder(order);
+        localStorage.loft = JSON.stringify(this.customers);
+    },
+
     restoreFromBackup: function (backup) {
         backup.forEach(function (customer) {
             var addedCustomer = model.addCustomer(customer);
@@ -210,6 +222,7 @@ var model = {
     editDiscount: function (customer, discount) {
         if (Customer.validate.discount(parseFloat(discount))) {
             customer.discount = parseFloat(discount);
+            localStorage.loft = JSON.stringify(this.customers);
         }
     },
     getOrders: function (customer) {
@@ -370,23 +383,42 @@ var view = {
         ///////////////////////////////////////////////////////////////
         this.customerDetailsOrderList.innerHTML = '';
         controller.getCustomerOrders(customer).forEach(function(order){
-            view.createOrderBlock(order);
+            view.createOrderBlock(order, customer);
         });
 
     },
 
-    createOrderBlock: function (order) {
+    createOrderBlock: function (order, customer) {
         var tr = document.createElement('tr');
 
         var orderName = document.createElement('td');
         orderName.textContent = order.name;
         var orderPrice = document.createElement('td');
         orderPrice.textContent = order.price.toFixed(2);
+        var orderDeleteBtn = document.createElement('button');
+        orderDeleteBtn.className = 'btn btn-danger btn-sm';
+
+        var icon = document.createElement('span');
+        icon.className = 'glyphicon glyphicon-remove';
+        orderDeleteBtn.appendChild(icon);
 
         tr.appendChild(orderName);
         tr.appendChild(orderPrice);
+        tr.appendChild(orderDeleteBtn);
 
         this.customerDetailsOrderList.appendChild(tr);
+
+        ///////////////////////////////////////////////
+        ///////// EVENT LISTENERS FOR ORDERS //////////
+        ///////////////////////////////////////////////
+
+        orderDeleteBtn.addEventListener('click', (function(order,customer){
+            return function(){
+                controller.deleteCustomerOrder(customer,order);
+            }
+        }(order,customer)));
+
+
     },
 
     createCustomerBlock: function (customer) {
@@ -473,6 +505,10 @@ var controller = {
     },
     addOrderToCustomer: function (customer, order) {
         model.addOrder(customer, order);
+        view.renderDetails(customer);
+    },
+    deleteCustomerOrder: function (customer, order) {
+        model.deleteOrder(customer, order);
         view.renderDetails(customer);
     },
     editCustomerDiscount: function (customer, discount) {
