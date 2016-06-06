@@ -72,13 +72,19 @@
                 </div>
                 <div class="btn-group btn-group-md" role="group" id="customer-details-buttons">
                 </div>
-                <form class="form-inline" id="order-add-form">
-                  <div class="form-group" id="add-order-form-name"></div>
-                  <div class="form-group" id="add-order-form-price"></div>
+
+                <form class="form-inline" id="add-order-form">
+                  <div class="form-group">
+                    <input type="text" placeholder="order" id="add-order-form-name"></input>
+                  </div>
+                  <div class="form-group">
+                    <input placeholder="price" id="add-order-form-price"></input>
+                  </div>
                   <button type="submit" class="btn btn-default" id="add-order-form-btn">Add order</button>
                 </form>
               </div>
             </div>
+
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
