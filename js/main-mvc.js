@@ -106,10 +106,11 @@ Customer.validate = function (obj) {
         console.log('Customer discount validation failed.');
         return false;
     }
-    // if ((!obj.id) || (!obj.id > 0)){
-    //     console.log('Customer id validation failed.');
-    //     return false;
-    // }
+    if (obj.discountMin && obj.discountMin <0){
+        console.log('Customer discount minutes validation failed.');
+        return false;
+    }
+
     return true;
 };
 
@@ -153,6 +154,7 @@ var model = {
     addCustomer: function (obj) {
         if (Customer.validate(obj)) {
             var customer = new Customer(obj.id, obj.name, obj.start ? new Date(obj.start) : Date.now(), obj.discount);
+            if (obj.discountMin > 0) customer.start += obj.discountMin*60*1000;
             this.customers.push(customer);
             localStorage.loft = JSON.stringify(this.customers);
         }
@@ -227,6 +229,7 @@ var view = {
         var customerAddName = document.getElementById('customer-add-name');
         var customerAddId = document.getElementById('customer-add-id');
         var customerAddDiscount = document.getElementById('customer-add-discount');
+        var customerAddDiscountMin = document.getElementById('customer-add-discount-min');
         // The list view
         this.customerList = document.getElementById('customer-list');
         // The details view
@@ -246,7 +249,8 @@ var view = {
             var obj = {
                 name: customerAddName.value,
                 id: customerAddId.value,
-                discount: parseInt(customerAddDiscount.value) / 100
+                discount: parseInt(customerAddDiscount.value) / 100,
+                discountMin: parseInt(customerAddDiscountMin.value)
             };
             controller.addCustomer(obj);
             customerForm.reset();
