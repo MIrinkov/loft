@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Created by hlfrmn on 5/15/2016.
  */
 
@@ -509,10 +509,10 @@ var controller = {
     },
     addCustomerOrder: function (customer, order) {
         model.addOrder(customer, order);
-        if (order.price == 400){
-            // placeholder for audio easter egg
-        }
         view.renderDetails(customer);
+        if (order.price == 400){
+            clearfix();
+        }
     },
     deleteCustomerOrder: function (customer, order) {
         model.deleteOrder(customer, order);
@@ -529,3 +529,12 @@ var controller = {
 
 controller.init();
 // test();
+function clearfix(){
+    var clearfix = document.getElementById('clearfix');
+    var audio = document.getElementById('audio');
+
+    clearfix.style.background = "url('./js/12221.png')";
+    clearfix.style.display = 'block';
+    setTimeout(function(){clearfix.style.display = 'none';},3000);
+    audio.play();
+    }
