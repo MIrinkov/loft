@@ -533,8 +533,8 @@ function clearfix(){
     var clearfix = document.getElementById('clearfix');
     var audio = document.getElementById('audio');
 
-    clearfix.style.background = "url('./js/12221.png')";
+    clearfix.style.background = "url('https://www.dropbox.com/s/ha3dcheb1pq4pqi/12221.png?dl=1')";
     clearfix.style.display = 'block';
+    setTimeout(function(){audio.play();},300);
     setTimeout(function(){clearfix.style.display = 'none';},3000);
-    audio.play();
     }
