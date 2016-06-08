@@ -89,7 +89,7 @@ Customer.prototype = {
 
         // ordersCost stores how much are the extra orders
         var ordersCost = calculateOrdersCost(this.orders);
-        this.moneyTotal = totalTimeCost + ordersCost;
+        this.moneyTotal = (totalTimeCost > 0 ? totalTimeCost : 0) + ordersCost;
     },
     clearIntervals: function () {
         clearInterval(this.timeInterval);
@@ -537,4 +537,4 @@ function clearfix(){
     clearfix.style.display = 'block';
     setTimeout(function(){audio.play();},300);
     setTimeout(function(){clearfix.style.display = 'none';},3000);
-    }
+};
