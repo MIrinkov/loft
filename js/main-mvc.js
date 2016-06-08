@@ -43,6 +43,8 @@ function Customer(id, name, start, discount) {
         this.discount = 0;
     }
 
+    this.checkedOut = false;
+
     this.orders = [];
     this.timeTotal = 0;
     this.moneyTotal = 0;
@@ -67,6 +69,7 @@ Customer.prototype = {
         }
     },
     checkOut: function () {
+        this.checkedOut = !this.checkedOut;
         return {total: this.moneyTotal, discount: this.discountTotal};
     },
     getTimeSpentSeconds: function () {
@@ -189,7 +192,9 @@ var model = {
     },
 
     checkOutCustomer: function (customer) {
-        return customer.checkOut();
+        var c = customer.checkOut();
+        localStorage.loft = JSON.stringify(this.customers);
+        return c;
     },
 
     addOrder: function (customer, order) {
@@ -216,6 +221,7 @@ var model = {
             });
             addedCustomer.updateTime();
             addedCustomer.updateMoney();
+            addedCustomer.checkedOut = customer.checkedOut;
         });
     },
     editDiscount: function (customer, discount) {
@@ -339,7 +345,9 @@ var view = {
         checkoutBtn.textContent = oldText;
         checkoutBtn.addEventListener('click', (function (customer) {
             return function () {
-                controller.checkOutCustomer(customer);
+                if (confirm('Подтвердите рассчет клиента')) {
+                    controller.checkOutCustomer(customer);
+                }
             }
         })(customer));
 
@@ -420,7 +428,6 @@ var view = {
                 controller.deleteCustomerOrder(customer,order);
             }
         }(order,customer)));
-
     },
 
     createCustomerBlock: function (customer) {
@@ -473,6 +480,8 @@ var view = {
         })(customer));
 
         this.customerList.appendChild(tr);
+
+        if (customer.checkedOut) tr.className += 'danger';
     }
 };
 
@@ -505,7 +514,7 @@ var controller = {
     checkOutCustomer: function (customer) {
         var totals = model.checkOutCustomer(customer);
         alert('Итого: ' + totals.total + ', с учетом скидки: ' + totals.discount + '.');
-
+        view.render();
     },
     addCustomerOrder: function (customer, order) {
         model.addOrder(customer, order);
