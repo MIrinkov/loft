@@ -351,16 +351,16 @@ var view = {
             }
         })(customer));
 
-        var deleteBtn = document.getElementById('customer-details-delete-btn');
-        oldText = deleteBtn.textContent;
-        deleteBtn.parentNode.replaceChild(deleteBtn.cloneNode(),deleteBtn);
-        var deleteBtn = document.getElementById('customer-details-delete-btn');
-        deleteBtn.textContent = oldText;
-        deleteBtn.addEventListener('click', (function (customer) {
-            return function () {
-                controller.deleteCustomer(customer);
-            }
-        })(customer));
+        // var deleteBtn = document.getElementById('customer-details-delete-btn');
+        // oldText = deleteBtn.textContent;
+        // deleteBtn.parentNode.replaceChild(deleteBtn.cloneNode(),deleteBtn);
+        // var deleteBtn = document.getElementById('customer-details-delete-btn');
+        // deleteBtn.textContent = oldText;
+        // deleteBtn.addEventListener('click', (function (customer) {
+        //     return function () {
+        //         controller.deleteCustomer(customer);
+        //     }
+        // })(customer));
 
 
         var orderSubmitBtn = document.getElementById('add-order-form-btn');
@@ -532,7 +532,7 @@ var controller = {
     },
     getCustomerOrders: function (customer) {
         return model.getOrders(customer);
-    }
+    },
 };
 
 
@@ -547,3 +547,11 @@ function clearfix(){
     setTimeout(function(){audio.play();},300);
     setTimeout(function(){clearfix.style.display = 'none';},3000);
 };
+
+function resetList () {
+    var pass = prompt();
+    console.log(pass);
+    if (pass == "pochtalion") {
+        controller.deleteAllCustomers();
+    }
+}
