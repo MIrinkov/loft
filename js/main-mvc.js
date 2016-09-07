@@ -70,6 +70,7 @@ Customer.prototype = {
     },
     checkOut: function () {
         this.checkedOut = !this.checkedOut;
+        this.clearIntervals();
         return {total: this.moneyTotal, discount: this.discountTotal};
     },
     getTimeSpentSeconds: function () {
