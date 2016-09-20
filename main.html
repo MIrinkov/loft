@@ -12,25 +12,25 @@
 </head>
 
 
-<body>
+<body ng-app="loft">
   <div class="jumbotron">
     <div class="container text-center">
       <h2>Loft cafe</h2>
     </div>
   </div>
-  <section>
-    <form id="customer-add-form" class="form-inline text-center">
+  <section ng-controller="MainController">
+    <form id="customer-add-form" name="customer_form" class="form-inline text-center" ng-submit="addCustomer()" novalidate>
       <div class="form-group">
-        <input type="text" class="form-control input-lg" id="customer-add-name" placeholder="Имя" autofocus>
+        <input type="text" class="form-control input-lg" ng-model="newCustomer.name" name="customer_name" placeholder="Имя" autofocus ng-required="!(newCustomer.id||newCustomer.name)">
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-id" placeholder="Номер">
+        <input class="form-control input-lg" ng-model="newCustomer.id" name="customer_id" placeholder="Номер" ng-required="!(newCustomer.id||newCustomer.name)">
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-discount" placeholder="Скидка в процентах">
+        <input class="form-control input-lg" name="customer_discount" placeholder="Скидка в процентах">
       </div>
       <div class="form-group">
-        <input class="form-control input-lg" id="customer-add-discount-min" placeholder="Скидка в минутах">
+        <input class="form-control input-lg" name="customer_discount_minutes" placeholder="Скидка в минутах">
       </div>
       <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
       <button class="btn btn-danger btn-lg" onclick="resetList()">Удалить всех</button>
@@ -46,70 +46,24 @@
             <th>Бабосики</th>
           </tr>
         </thead>
-        <tbody id="customer-list">
+        <tbody>
+          <tr ng-repeat="customer in customers" ng-click="customerDetails(customer)">
+            <loft_customer></loft_customer>
+          </tr>
         </tbody>
       </table>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="showDetailsModal" role="dialog">
-      <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Информация о посетителе</h4>
-          </div>
-          <div class="modal-body">
-            <div id="customer-details">
-              <h2 id="customer-details-name"></h2>
-              <h2 id="customer-details-id"></h2>
-              <div id="customer-time">
-                <!--             Time total: -->
-                <span id="customer-time-value"></span>
-              </div>
-              <div id="customer-money">
-                <!-- Money total: -->
-                <span id="customer-money-value"></span>
-              </div>
-              <div style="margin:10px 0;" role="group" id="customer-details-buttons">
-                <button type="button" class="btn btn-info btn-block" id="customer-details-checkout-btn">Рассчитать</button>
-                <button type="button" class="btn btn-info btn-block" id="customer-details-discount-btn">Добавить скидку</button>
-<!--                 <button type="button" class="btn btn-danger btn-block" id="customer-details-delete-btn" data-dismiss="modal">Удалить</button> -->
-              </div>
-              <form class="form" id="add-order-form">
-                <div class="form-group">
-                  <input type="text" class="form-control input-md" placeholder="Заказ" id="add-order-form-name">
-                </div>
-                <div class="form-group">
-                  <input placeholder="Цена" class="form-control input-md" id="add-order-form-price">
-                </div>
-                <button type="submit" class="btn btn-success btn-block" id="add-order-form-btn">Добавить заказ</button>
-              </form>
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>Заказ</th>
-                    <th>Цена</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="order-list">
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-          </div>
-        </div>
-      </div>
-    </div>
+
+    <!-- Modal end -->
     <audio id="audio">
         <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
     </audio>
     <div id="clearfix" style="display: none; width: 260px; height: 500px; position: fixed; top: 0; left:0;"></div>
   </section>
-  <script src="js/main-mvc.js"></script>
+  <script src="js/angular_1.5.8.js"></script>
+  <script src="js/ngDialog.js"></script>
+  <script src="js/app.js"></script>
 </body>
 
 </html>
