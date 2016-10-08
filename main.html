@@ -7,8 +7,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="css/ngdialog.css">
+  <link rel="stylesheet" href="css/ngdialog-theme-default.css">
 </head>
 
 
@@ -33,16 +33,20 @@
         <input class="form-control input-lg" name="customer_discount_minutes" placeholder="Скидка в минутах">
       </div>
       <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
-      <button class="btn btn-danger btn-lg" onclick="resetList()">Удалить всех</button>
+      <button class="btn btn-danger btn-lg">Удалить всех</button>
     </form>
     <div style="margin:50px"></div>
     <div class="container">
       <table class="table table-hover">
         <thead>
           <tr>
+            <!--Name-->
             <th>Имя</th>
+            <!--ID-->
             <th>Номер</th>
+            <!--Time-->
             <th>Время</th>
+            <!--Money-->
             <th>Бабосики</th>
           </tr>
         </thead>

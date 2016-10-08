@@ -65,95 +65,10 @@ angular.module('loft', ['ngDialog'])
                 var expensiveCost = prices.expensiveMinutes * prices.minuteCost;
                 var cheapCost = (minutesTotal - prices.expensiveMinutes) * prices.cheapMinuteCost;
                 var total = expensiveCost + cheapCost;
-                return total > prices.maximumBill ? prices.maximumBill : total
+                return total > prices.maximumBill ? prices.maximumBill : total;
             }
-            return Math.round(prices.minuteCost * minutesTotal)
+            return Math.round(prices.minuteCost * minutesTotal);
         }
-    })
-    .controller('MainController', function ($scope, $interval, ngDialog, Customer) {
-        $scope.customers = [];
-        $scope.newCustomer = {
-            name: "",
-            id: "",
-            start: null,
-            discount: null
-        };
-        $scope.addCustomer = function () {
-            // add current time
-            $scope.newCustomer.start = Date.now();
-            // push the customer to container
-            $scope.customers.push(Customer.fromObj($scope.newCustomer));
-            // reset the form
-            $scope.newCustomer.name = "";
-            $scope.newCustomer.id = "";
-            $scope.newCustomer.start = null;
-            $scope.newCustomer.discount = null;
-            console.log('Customer added. Customers: ', $scope.customers)
-        };
-        $scope.customerDetails = function (customer) {
-            ngDialog.open({
-                template: 'details.html',
-                controller: 'DetailsController',
-                data: {
-                    customer: customer
-                }
-            })
-        };
-    })
-    .controller('DetailsController', function ($scope, ngDialog, Order) {
-        var currentCustomer = $scope.ngDialogData.customer;
-        $scope.newOrder = {
-            description: "",
-            price: 0
-        };
-        $scope.orders = currentCustomer.orders;
-        $scope.addOrder = function () {
-            var order = Order.fromObj($scope.newOrder);
-            currentCustomer.addOrder(order);
-            $scope.newOrder.description = "";
-            $scope.newOrder.price = null;
-        };
-
-        $scope.deleteOrder = function (order) {
-            currentCustomer.deleteOrder(order)
-        };
-    })
-    .directive('loftCustomer', function ($interval, Appraiser, msToTimeFilter) {
-        return {
-            replace: true,
-            templateUrl: 'customer.html',
-            controller: function personalCustomerController() {
-                this.timeTotal = 0;
-                this.moneyTotal = 0;
-            },
-            controllerAs: 'volatile',
-            scope: {
-                customer: '='
-            },
-            link: function (scope, element) {
-                var moneyElem = element[0].querySelector(".customer-money");
-                var timeElem = element[0].querySelector(".customer-time");
-
-                function updateTime() {
-                    scope.timeTotal = Date.now() - scope.customer.start;
-                    timeElem.innerText = msToTimeFilter(scope.timeTotal);
-                }
-
-                function updateMoney() {
-                    scope.moneyTotal = Appraiser.appraiseTime(scope.timeTotal);
-                    moneyElem.innerText = scope.moneyTotal;
-                }
-
-                var moneyInterval = $interval(updateMoney, 1000);
-                var timeInterval = $interval(updateTime, 1000);
-
-                element.on('$destroy', function () {
-                    $interval.cancel(moneyInterval);
-                    $interval.cancel(timeInterval);
-                })
-            }
-        };
-
     })
     .filter('msToTime', function () {
         return function (ms) {
@@ -178,4 +93,84 @@ angular.module('loft', ['ngDialog'])
 
             return timeString;
         };
+    })
+    .controller('MainController', function ($scope, $interval, Customer) {
+        $scope.customers = [];
+        $scope.newCustomer = {
+            name: "",
+            id: "",
+            start: null,
+            discount: null
+        };
+        $scope.addCustomer = function () {
+            // add current time
+            $scope.newCustomer.start = Date.now();
+            // push the customer to container
+            $scope.customers.push(Customer.fromObj($scope.newCustomer));
+            // reset the form
+            $scope.newCustomer.name = "";
+            $scope.newCustomer.id = "";
+            $scope.newCustomer.start = null;
+            $scope.newCustomer.discount = null;
+        };
+
+    })
+    .controller('DetailsController', function ($scope, ngDialog, Order) {
+        $scope.newOrder = {
+            description: "",
+            price: null
+        };
+        $scope.addOrder = function () {
+            var order = Order.fromObj($scope.newOrder);
+            $scope.customer.addOrder(order);
+            $scope.newOrder.description = "";
+            $scope.newOrder.price = null;
+        };
+
+        $scope.deleteOrder = function (order) {
+            $scope.customer.deleteOrder(order);
+        };
+    })
+    .directive('loftCustomer', function ($interval, ngDialog, Appraiser, msToTimeFilter) {
+        return {
+            replace: true,
+            templateUrl: 'customer.html',
+            controller: function personalCustomerController($scope) {
+
+                $scope.openCustomerDetails = function (customer) {
+                    console.log('clicked');
+                    console.log($scope);
+                    ngDialog.open({
+                        template: 'details.html',
+                        controller: 'DetailsController',
+                        scope: $scope,
+                        classname: 'ngdialog-theme-default'
+                    });
+                    console.log($scope);
+                };
+            },
+            scope: {
+                customer: '='
+            },
+            link: function (scope, element) {
+                scope.timeTotal = 0;
+                scope.moneyTotal = 0;
+
+                function updateTime() {
+                    scope.timeTotal = Date.now() - scope.customer.start;
+                }
+                function updateMoney() {
+                    scope.moneyTotal = Appraiser.appraiseTime(scope.timeTotal);
+                }
+
+                var moneyInterval = $interval(updateMoney, 1000);
+                var timeInterval = $interval(updateTime, 1000);
+
+                element.on('$destroy', function () {
+                    $interval.cancel(moneyInterval);
+                    $interval.cancel(timeInterval);
+                });
+            }
+        };
+
     });
