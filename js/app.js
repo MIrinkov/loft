@@ -3,9 +3,11 @@
  */
 angular.module('loft', ['ngDialog'])
     .factory('Customer', function () {
+        // customer object factory
         function Customer(id, name, start, discount) {
             this.name = name || '';
             this.id = id || null;
+            // an option to start from a known point in time (e.g. if restoring from back-up)
             this.start = start || Date.now();
             this.discount = parseFloat(discount) || 0;
 
@@ -35,7 +37,7 @@ angular.module('loft', ['ngDialog'])
 
         return Customer;
     })
-    .factory('Order', function () {
+    .factory('Order', function orderFactory() {
         function Order(description, price) {
             this.description = description || '';
             this.price = parseInt(price) || 0;
@@ -51,24 +53,24 @@ angular.module('loft', ['ngDialog'])
     })
     .service('Appraiser', function () {
         var prices = {
-            minuteCost: 2,
-            cheapMinuteCost: 1.5,
-            expensiveMinutes: 60,
-            maxMinutePrice: 350
+            minuteCost: 2,          // the first 60 minutes cost this much
+            cheapMinuteCost: 1.5,   // all subsequent minutes cost this much
+            expensiveMinutes: 60,   // how many minutes have increased cost
+            maximumBill: 350        // total bill for minutes cannot exceed this limit
         };
 
-        this.appraiseTime = function (customer) {
-            var minutesTotal = Math.round((Date.now() - customer.start) / (1000 * 60));
+        this.appraiseTime = function (msTotal) {
+            var minutesTotal = Math.round(msTotal / (1000 * 60));
             if (minutesTotal > prices.expensiveMinutes) {
                 var expensiveCost = prices.expensiveMinutes * prices.minuteCost;
                 var cheapCost = (minutesTotal - prices.expensiveMinutes) * prices.cheapMinuteCost;
-                return Math.round(expensiveCost + cheapCost)
+                var total = expensiveCost + cheapCost;
+                return total > prices.maximumBill ? prices.maximumBill : total
             }
-            else
-                return Math.round(prices.minuteCost * minutesTotal)
+            return Math.round(prices.minuteCost * minutesTotal)
         }
     })
-    .controller('MainController', function ($scope, $interval, ngDialog, Customer, Appraiser) {
+    .controller('MainController', function ($scope, $interval, ngDialog, Customer) {
         $scope.customers = [];
         $scope.newCustomer = {
             name: "",
@@ -102,10 +104,9 @@ angular.module('loft', ['ngDialog'])
         var currentCustomer = $scope.ngDialogData.customer;
         $scope.newOrder = {
             description: "",
-            price: null
+            price: 0
         };
         $scope.orders = currentCustomer.orders;
-
         $scope.addOrder = function () {
             var order = Order.fromObj($scope.newOrder);
             currentCustomer.addOrder(order);
@@ -117,27 +118,64 @@ angular.module('loft', ['ngDialog'])
             currentCustomer.deleteOrder(order)
         };
     })
-    .controller('customerController', function ($scope) {
-        $scope.volatile = {
-            msTotal:null,
-            moneyTotal:null
-        };
-        function updateTime() {
-            var ms = (Date.now - $scope.customer.start);
-            updateMoney()
-        }
-        function updateMoney() {
-
-        }
-    })
-    .directive('loftCustomer', function ($interval) {
+    .directive('loftCustomer', function ($interval, Appraiser, msToTimeFilter) {
         return {
-            restrict: 'E',
             replace: true,
             templateUrl: 'customer.html',
-            controller:'customerController',
+            controller: function personalCustomerController() {
+                this.timeTotal = 0;
+                this.moneyTotal = 0;
+            },
+            controllerAs: 'volatile',
             scope: {
-                customer:'='
+                customer: '='
+            },
+            link: function (scope, element) {
+                var moneyElem = element[0].querySelector(".customer-money");
+                var timeElem = element[0].querySelector(".customer-time");
+
+                function updateTime() {
+                    scope.timeTotal = Date.now() - scope.customer.start;
+                    timeElem.innerText = msToTimeFilter(scope.timeTotal);
+                }
+
+                function updateMoney() {
+                    scope.moneyTotal = Appraiser.appraiseTime(scope.timeTotal);
+                    moneyElem.innerText = scope.moneyTotal;
+                }
+
+                var moneyInterval = $interval(updateMoney, 1000);
+                var timeInterval = $interval(updateTime, 1000);
+
+                element.on('$destroy', function () {
+                    $interval.cancel(moneyInterval);
+                    $interval.cancel(timeInterval);
+                })
             }
-        }
+        };
+
+    })
+    .filter('msToTime', function () {
+        return function (ms) {
+            var oneSecond = 1000;
+            var oneMinute = oneSecond * 60;
+            var oneHour = oneMinute * 60;
+
+            var seconds = Math.floor((ms % oneMinute) / oneSecond);
+            var minutes = Math.floor((ms % oneHour) / oneMinute);
+            var hours = Math.floor(ms / oneHour);
+
+            var timeString = '';
+            if (hours !== 0) {
+                timeString += hours + ' h '
+            }
+            if (minutes !== 0) {
+                timeString += minutes + ' m ';
+            }
+            if (seconds !== 0 || ms < 1000) {
+                timeString += seconds + ' s ';
+            }
+
+            return timeString;
+        };
     });

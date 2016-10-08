@@ -47,9 +47,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="customer in customers" ng-click="customerDetails(customer)">
-            <loft_customer></loft_customer>
-          </tr>
+            <tr ng-repeat="customer in customers" loft-customer customer="customer"></tr>
         </tbody>
       </table>
     </div>
