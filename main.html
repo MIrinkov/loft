@@ -49,6 +49,11 @@
         span.glyphicon-remove:hover {
             color: red;
         }
+
+        tr.checked-out{
+            background-color: #ff7777!important;
+            opacity: 0.5;
+        }
     </style>
 </head>
 
@@ -65,13 +70,13 @@
           novalidate>
         <div class="form-group">
             <input type="text" class="form-control input-lg"
-                   ng-class="{highlight: customer_form.$invalid && customer_form.name.$touched || customer_form.id.$touched}"
+                   ng-class="{highlight: customer_form.$invalid && (customer_form.name.$touched || customer_form.id.$touched)}"
                    ng-model="newCustomer.name" name="name"
                    placeholder="Имя" autofocus ng-required="!(newCustomer.id.length||newCustomer.name.length)">
         </div>
         <div class="form-group">
             <input type="text" class="form-control input-lg"
-                   ng-class="{highlight: customer_form.$invalid && customer_form.name.$touched || customer_form.id.$touched}"
+                   ng-class="{highlight: customer_form.$invalid && (customer_form.name.$touched || customer_form.id.$touched)}"
                    ng-model="newCustomer.id" name="id"
                    placeholder="Номер" ng-required="!(newCustomer.id.length||newCustomer.name.length)">
         </div>

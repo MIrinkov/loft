@@ -1,4 +1,4 @@
-<tr ng-click="openCustomerDetails()">
+<tr ng-click="openCustomerDetails()" ng-class="{'checked-out':customer.checkedOut}">
     <td ng-bind="customer.name"></td>
     <td ng-bind="customer.id"></td>
     <td class="customer-time" ng-bind="timeTotal|msToTime"></td>

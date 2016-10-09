@@ -3,15 +3,18 @@
  */
 angular.module('loft', ['ngDialog'])
     .factory('Customer', function () {
-        function Customer(name, id, start, discountPercent, freeMinutes, orders) {
+        function Customer(name, id, start, discount, freeMinutes, orders) {
             this.name = name || '';
-            this.id = id || null;
+            this.id = id || '';
             // an option to start from a known point in time (e.g. if restoring from back-up)
             this.start = start || Date.now();
-            this.discount = discountPercent || 0;
-            //if discount is in percents, convert it to rate
-            if (this.discount >= 1)
-                this.discount = parseFloat(discountPercent) / 100;
+
+            //if discount is in percents(int), convert it to rate(float)
+            if (Number(discount) === discount && discount % 1 === 0)
+                this.discount = parseFloat(discount) / 100;
+            else
+                this.discount = discount;
+
             this.freeMinutes = parseInt(freeMinutes, 10) || 0;
             // an option to start from
             this.orders = orders || [];
@@ -35,7 +38,7 @@ angular.module('loft', ['ngDialog'])
                 obj.name,
                 obj.id,
                 obj.start,
-                obj.discountPercent,
+                obj.discount,
                 obj.freeMinutes,
                 obj.orders)
         };
@@ -75,7 +78,7 @@ angular.module('loft', ['ngDialog'])
                 var cheapCost = (minutesTotal - prices.expensiveMinutes) * prices.cheapMinuteCost;
                 var total = expensiveCost + cheapCost;
                 // apply discount
-                total *= (1 - discount);
+                total = Math.round(total * (1 - discount));
                 return Math.min(total, prices.maximumBill)
             }
             return Math.round(prices.minuteCost * minutesTotal * (1 - discount));
@@ -131,7 +134,7 @@ angular.module('loft', ['ngDialog'])
     }])
     .filter('msToTime', function () {
         return function (ms) {
-            // converts milliseconds to readable time string, like "1 h 20 m 13 s"
+            // converts milliseconds to readable time string, like "1 h 20 m"
 
             var oneSecond = 1000;
             var oneMinute = oneSecond * 60;
@@ -146,7 +149,8 @@ angular.module('loft', ['ngDialog'])
                 timeString += hours + ' h ';
             if (minutes !== 0)
                 timeString += minutes + ' m ';
-            if (seconds !== 0 || ms < 1000)
+            if (hours == 0)
+            // only show seconds when there are no hours
                 timeString += seconds + ' s';
 
             return timeString;
@@ -158,7 +162,7 @@ angular.module('loft', ['ngDialog'])
             name: "",
             id: "",
             start: 0,
-            discountPercent: null,
+            discount: null,
             freeMinutes: null
         };
         loftStorage.init($scope);
@@ -179,32 +183,20 @@ angular.module('loft', ['ngDialog'])
         };
 
         $scope.resetForm = function (form) {
-            $scope.newCustomer = {
-                name: "",
-                id: "",
-                start: 0,
-                discountPercent: null,
-                freeMinutes: null
-            };
-
-            // get form controls, filtering out angular properties that are prefixed with '$'
-            var controlNames = Object.keys(form).filter(function (key) {
-                return key.indexOf('$') !== 0
-            });
-
-            // set the values to undefined, to avoid validation messages after submitting the form
-            controlNames.map(function (name) {
-                var control = form[name];
-                control.$setViewValue(undefined);
-            });
 
             form.$setPristine();
             form.$setUntouched();
+
+            $scope.newCustomer.name = "";
+            $scope.newCustomer.id = "";
+            $scope.newCustomer.start = 0;
+            $scope.newCustomer.discount = null;
+            $scope.newCustomer.freeMinutes = null;
         };
 
 
     }])
-    .controller('DetailsController', ['$scope', 'Order', function ($scope, Order) {
+    .controller('DetailsController', ['$scope', '$window', 'Order', function ($scope, $window, Order) {
         $scope.newOrder = {
             description: "",
             price: null
@@ -219,6 +211,22 @@ angular.module('loft', ['ngDialog'])
         $scope.deleteOrder = function (order) {
             $scope.customer.deleteOrder(order);
         };
+
+        $scope.checkOut = function () {
+            var confirmed = $window.confirm('Checkout the customer?');
+            if (!confirmed) return;
+            var payed = $window.confirm('Received payment from the customer?');
+            if (!payed) return;
+            $scope.customer.checkedOut = $scope.timeTotal;
+        };
+
+        $scope.changeDiscount = function () {
+            var current_discount = ($scope.customer.discount * 100) + '%';
+            var new_discount = $window.prompt("The discount is set to " + current_discount + ". Enter new discount percentage:");
+            new_discount = parseInt(new_discount, 10);
+            if (new_discount >= 0 && new_discount <= 100)
+                $scope.customer.discount = new_discount / 100;
+        }
     }])
     .directive('loftCustomer', ['$interval', 'ngDialog', 'Appraiser', function ($interval, ngDialog, Appraiser) {
         return {
@@ -239,12 +247,17 @@ angular.module('loft', ['ngDialog'])
                 customer: '='
             },
             link: function (scope, element) {
+                var timeInterval, moneyInterval;
+
                 scope.timeTotal = 0;
                 scope.moneyTotal = 0;
 
                 function updateTime() {
                     // gets the total ms fom start until now
                     scope.timeTotal = Date.now() - scope.customer.start;
+                    if(scope.customer.checkedOut){
+                        $interval.cancel(timeInterval);
+                    }
                 }
 
                 function updateMoney() {
@@ -253,8 +266,8 @@ angular.module('loft', ['ngDialog'])
                 }
 
                 // update time and money every second
-                var timeInterval = $interval(updateTime, 1000);
-                var moneyInterval = $interval(updateMoney, 1000);
+                timeInterval = $interval(updateTime, 1000);
+                moneyInterval = $interval(updateMoney, 1000);
 
                 // clear the intervals to prevent a memory leak
                 element.on('$destroy', function () {
