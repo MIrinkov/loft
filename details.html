@@ -40,7 +40,7 @@
             <tr ng-repeat="order in customer.orders">
                 <td ng-bind="order.description"></td>
                 <td ng-bind="order.price"></td>
-                <td><span class="glyphicon glyphicon-remove"></span></td>
+                <td ng-click="deleteOrder(order)"><span class="glyphicon glyphicon-remove"></span></td>
             </tr>
             </tbody>
         </table>

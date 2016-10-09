@@ -2,70 +2,110 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Loft cafe</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/ngdialog.css">
-  <link rel="stylesheet" href="css/ngdialog-theme-default.css">
+    <meta charset="UTF-8">
+    <title>Loft cafe</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/ngdialog.css">
+    <link rel="stylesheet" href="css/ngdialog-theme-default.css">
+    <style>
+        @media (min-width: 768px) {
+            .form-inline .form-group {
+                margin-bottom: 15px;
+            }
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input.ng-invalid{
+            background-color: #ff7777;
+            color: #ffffff;
+        }
+
+        input.ng-invalid::-webkit-input-placeholder {
+            color: #ffffff;
+        }
+        input.ng-invalid:-moz-placeholder {
+            /* FF 4-18 */
+            color: #ffffff;
+        }
+        input.ng-invalid::-moz-placeholder {
+            /* FF 19+ */
+            color: #ffffff;
+        }
+        input.ng-invalid:-ms-input-placeholder {
+            /* IE 10+ */
+            color: #ffffff;
+        }
+
+        span.glyphicon-remove:hover{
+            color: red;
+        }
+    </style>
 </head>
 
 
 <body ng-app="loft">
-  <div class="jumbotron">
+<div class="jumbotron">
     <div class="container text-center">
-      <h2>Loft cafe</h2>
+        <h2>Loft cafe</h2>
     </div>
-  </div>
-  <section ng-controller="MainController">
-    <form id="customer-add-form" name="customer_form" class="form-inline text-center" ng-submit="addCustomer()" novalidate>
-      <div class="form-group">
-        <input type="text" class="form-control input-lg" ng-model="newCustomer.name" name="customer_name" placeholder="Имя" autofocus ng-required="!(newCustomer.id||newCustomer.name)">
-      </div>
-      <div class="form-group">
-        <input class="form-control input-lg" ng-model="newCustomer.id" name="customer_id" placeholder="Номер" ng-required="!(newCustomer.id||newCustomer.name)">
-      </div>
-      <div class="form-group">
-        <input class="form-control input-lg" name="customer_discount" placeholder="Скидка в процентах">
-      </div>
-      <div class="form-group">
-        <input class="form-control input-lg" name="customer_discount_minutes" placeholder="Скидка в минутах">
-      </div>
-      <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
-      <button class="btn btn-danger btn-lg">Удалить всех</button>
+</div>
+<section ng-controller="MainController">
+    <form id="customer-add-form" name="customer_form" class="form-inline text-center" ng-submit="customer_form.$valid && addCustomer()"
+          novalidate>
+        <div class="form-group">
+            <input type="text" class="form-control input-lg" ng-model="newCustomer.name" name="customer_name"
+                   placeholder="Имя" autofocus ng-required="!(newCustomer.id.length||newCustomer.name.length)">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control input-lg" ng-model="newCustomer.id" name="customer_id"
+                   placeholder="Номер" ng-required="!(newCustomer.id.length||newCustomer.name.length)">
+        </div>
+        <div class="form-group">
+            <input type="number" min="0" max="100" class="form-control input-lg" name="customer_discount_percent" ng-model="newCustomer.discountPercent"
+                   placeholder="Скидка в процентах">
+        </div>
+        <div class="form-group">
+            <input type="number" min="0" class="form-control input-lg" name="customer_discount_minutes" ng-model="newCustomer.freeMinutes"
+                   placeholder="Скидка в минутах">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-danger btn-lg" type="button">Удалить всех</button>
+        </div>
     </form>
     <div style="margin:50px"></div>
     <div class="container">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <!--Name-->
-            <th>Имя</th>
-            <!--ID-->
-            <th>Номер</th>
-            <!--Time-->
-            <th>Время</th>
-            <!--Money-->
-            <th>Бабосики</th>
-          </tr>
-        </thead>
-        <tbody>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <!--Name-->
+                <th>Имя</th>
+                <!--ID-->
+                <th>Номер</th>
+                <!--Time-->
+                <th>Время</th>
+                <!--Money-->
+                <th>Бабосики</th>
+            </tr>
+            </thead>
+            <tbody>
             <tr ng-repeat="customer in customers" loft-customer customer="customer"></tr>
-        </tbody>
-      </table>
+            </tbody>
+        </table>
     </div>
-    <!-- Modal -->
-
-    <!-- Modal end -->
-    <audio id="audio">
-        <source src="https://www.dropbox.com/s/23hg1437ia1oiwx/miha.ogg?dl=1" />
-    </audio>
-    <div id="clearfix" style="display: none; width: 260px; height: 500px; position: fixed; top: 0; left:0;"></div>
-  </section>
-  <script src="js/angular_1.5.8.js"></script>
-  <script src="js/ngDialog.js"></script>
-  <script src="js/app.js"></script>
+</section>
+<script src="js/angular_1.5.8.js"></script>
+<script src="js/ngDialog.js"></script>
+<script src="js/app.js"></script>
 </body>
 
 </html>
