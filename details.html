@@ -17,13 +17,13 @@
             <button type="button" class="btn btn-info btn-block" id="customer-details-discount-btn">Добавить скидку
             </button>
         </div>
-        <form class="form" id="add-order-form" name="order_form" ng-submit="addOrder()" novalidate>
+        <form class="form" id="add-order-form" name="order_form" ng-submit="order_form.$valid && addOrder()" novalidate>
             <div class="form-group">
                 <input type="text" class="form-control input-md" placeholder="Заказ" id="add-order-name"
-                       name="order_desc" ng-model="newOrder.description">
+                       name="order_desc" ng-model="newOrder.description" required>
             </div>
             <div class="form-group">
-                <input placeholder="Цена" class="form-control input-md" id="add-order-price" name="order_price"
+                <input placeholder="Цена" type="number" class="form-control input-md" id="add-order-price" name="order_price"
                        ng-model="newOrder.price">
             </div>
             <button type="submit" class="btn btn-success btn-block" id="add-order-form-btn">Добавить заказ</button>

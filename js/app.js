@@ -4,15 +4,15 @@
 angular.module('loft', ['ngDialog'])
     .factory('Customer', function () {
         // customer object factory
-        function Customer(id, name, start, discountPercent, freeMinutes) {
+        function Customer(name, id, start, discountPercent, freeMinutes, orders) {
             this.name = name || '';
             this.id = id || null;
             // an option to start from a known point in time (e.g. if restoring from back-up)
             this.start = start || Date.now();
-            this.discount = parseInt(discountPercent, 10)/100 || 0;
+            this.discount = parseInt(discountPercent, 10) / 100 || 0;
             this.freeMinutes = parseInt(freeMinutes, 10) || 0;
 
-            this.orders = [];
+            this.orders = orders || [];
         }
 
         Customer.prototype.addOrder = function (order) {
@@ -30,11 +30,12 @@ angular.module('loft', ['ngDialog'])
 
         Customer.fromObj = function (obj) {
             return new Customer(
-                obj.id,
                 obj.name,
+                obj.id,
                 obj.start,
                 obj.discountPercent,
-                obj.freeMinutes)
+                obj.freeMinutes,
+                obj.orders)
         };
 
         return Customer;
@@ -72,7 +73,7 @@ angular.module('loft', ['ngDialog'])
                 var cheapCost = (minutesTotal - prices.expensiveMinutes) * prices.cheapMinuteCost;
                 var total = expensiveCost + cheapCost;
                 // apply discount
-                total *= (1-discount);
+                total *= (1 - discount);
                 return Math.min(total, prices.maximumBill)
             }
             return Math.round(prices.minuteCost * minutesTotal * (1 - discount));
@@ -82,9 +83,8 @@ angular.module('loft', ['ngDialog'])
         this.appraiseOrders = function (orders) {
             var total = 0;
             orders.forEach(function (order) {
-                total+= order.price;
+                total += order.price;
             });
-            console.log('orders: ',total);
             return total
         };
 
@@ -95,6 +95,36 @@ angular.module('loft', ['ngDialog'])
             return ordersBill + timeBill;
         }
     })
+    .service('loftStorage', ['$window', 'Order', 'Customer', function ($window, Order, Customer) {
+
+        function save(array) {
+            if (array.length !== 0)
+                $window.localStorage.loftStorage = angular.toJson(array);
+        }
+        function restore() {
+            var json = $window.localStorage.loftStorage;
+            if (json == null)
+                return [];
+
+            var array = angular.fromJson(json);
+
+            return array.map(function (customer) {
+                customer.orders = customer.orders.map(Order.fromObj);
+                return Customer.fromObj(customer);
+            });
+        }
+
+        this.clear = function () {
+            delete $window.localStorage.loftStorage;
+        };
+
+        this.init = function ($scope) {
+            scope = $scope;
+            scope.customers = restore();
+            $scope.$watch('customers', save, true)
+        };
+
+    }])
     .filter('msToTime', function () {
         return function (ms) {
             var oneSecond = 1000;
@@ -119,7 +149,7 @@ angular.module('loft', ['ngDialog'])
             return timeString;
         };
     })
-    .controller('MainController', function ($scope, $interval, Customer) {
+    .controller('MainController', function ($scope, $interval, Customer, loftStorage) {
         $scope.customers = [];
         $scope.newCustomer = {
             name: "",
@@ -127,8 +157,9 @@ angular.module('loft', ['ngDialog'])
             start: 0,
             discountPercent: null,
             freeMinutes: null
-        }
-        ;
+        };
+        loftStorage.init($scope);
+
         $scope.addCustomer = function () {
             // add current time
             $scope.newCustomer.start = Date.now();
@@ -166,15 +197,12 @@ angular.module('loft', ['ngDialog'])
             controller: function personalCustomerController($scope) {
                 //function for opening the modal
                 $scope.openCustomerDetails = function (customer) {
-                    console.log('clicked');
-                    console.log($scope);
                     ngDialog.open({
                         template: 'details.html',
                         controller: 'DetailsController',
                         scope: $scope,
                         classname: 'ngdialog-theme-default'
                     });
-                    console.log($scope);
                 };
             },
             scope: {
