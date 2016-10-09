@@ -3,15 +3,17 @@
  */
 angular.module('loft', ['ngDialog'])
     .factory('Customer', function () {
-        // customer object factory
         function Customer(name, id, start, discountPercent, freeMinutes, orders) {
             this.name = name || '';
             this.id = id || null;
             // an option to start from a known point in time (e.g. if restoring from back-up)
             this.start = start || Date.now();
-            this.discount = parseInt(discountPercent, 10) / 100 || 0;
+            this.discount = discountPercent || 0;
+            //if discount is in percents, convert it to rate
+            if (this.discount >= 1)
+                this.discount = parseFloat(discountPercent) / 100;
             this.freeMinutes = parseInt(freeMinutes, 10) || 0;
-
+            // an option to start from
             this.orders = orders || [];
         }
 
@@ -24,7 +26,7 @@ angular.module('loft', ['ngDialog'])
                 this.orders.splice(index, 1);
             }
             else {
-                console.log('Order deletion error - order not found.');
+                console.log("Order deletion error - order not found.");
             }
         };
 
@@ -98,16 +100,18 @@ angular.module('loft', ['ngDialog'])
     .service('loftStorage', ['$window', 'Order', 'Customer', function ($window, Order, Customer) {
 
         function save(array) {
+            // saves main customer array to localStorage, IGNORES EMPTY ARRAYS
             if (array.length !== 0)
                 $window.localStorage.loftStorage = angular.toJson(array);
         }
+
         function restore() {
+            // builds and returns a new customer array using Order and Customer constructors
             var json = $window.localStorage.loftStorage;
             if (json == null)
                 return [];
-
             var array = angular.fromJson(json);
-
+            // first convert orders to Order instances, then get Customer instances
             return array.map(function (customer) {
                 customer.orders = customer.orders.map(Order.fromObj);
                 return Customer.fromObj(customer);
@@ -127,6 +131,8 @@ angular.module('loft', ['ngDialog'])
     }])
     .filter('msToTime', function () {
         return function (ms) {
+            // converts milliseconds to readable time string, like "1 h 20 m 13 s"
+
             var oneSecond = 1000;
             var oneMinute = oneSecond * 60;
             var oneHour = oneMinute * 60;
@@ -136,22 +142,19 @@ angular.module('loft', ['ngDialog'])
             var hours = Math.floor(ms / oneHour);
 
             var timeString = '';
-            if (hours !== 0) {
-                timeString += hours + ' h '
-            }
-            if (minutes !== 0) {
+            if (hours !== 0)
+                timeString += hours + ' h ';
+            if (minutes !== 0)
                 timeString += minutes + ' m ';
-            }
-            if (seconds !== 0 || ms < 1000) {
-                timeString += seconds + ' s ';
-            }
+            if (seconds !== 0 || ms < 1000)
+                timeString += seconds + ' s';
 
             return timeString;
         };
     })
-    .controller('MainController', function ($scope, $interval, Customer, loftStorage) {
-        $scope.customers = [];
-        $scope.newCustomer = {
+    .controller('MainController', ['$scope', '$interval', '$window', 'Customer', 'loftStorage', function ($scope, $interval, $window, Customer, loftStorage) {
+        $scope.customers = [];      // the main array that keeps all customers
+        $scope.newCustomer = {      // an object bound to the form
             name: "",
             id: "",
             start: 0,
@@ -163,18 +166,45 @@ angular.module('loft', ['ngDialog'])
         $scope.addCustomer = function () {
             // add current time
             $scope.newCustomer.start = Date.now();
-            // push the customer to container
-            $scope.customers.push(Customer.fromObj($scope.newCustomer));
-            // reset the form
-            $scope.newCustomer.name = "";
-            $scope.newCustomer.id = "";
-            $scope.newCustomer.start = 0;
-            $scope.newCustomer.discountPercent = null;
-            $scope.newCustomer.freeMinutes = null;
+            // push the customer to container, RETURNS a positive integer USED in the view
+            return $scope.customers.push(Customer.fromObj($scope.newCustomer));
         };
 
-    })
-    .controller('DetailsController', function ($scope, ngDialog, Order) {
+        $scope.deleteAll = function () {
+            var confirmed = $window.confirm('Are you sure you want to DELETE ALL CUSTOMERS?');
+            if (!confirmed) return;
+            // first clear the array, then call loftStorage.clear(), since loftStorage.save() ignores empty arrays
+            $scope.customers = [];
+            loftStorage.clear();
+        };
+
+        $scope.resetForm = function (form) {
+            $scope.newCustomer = {
+                name: "",
+                id: "",
+                start: 0,
+                discountPercent: null,
+                freeMinutes: null
+            };
+
+            // get form controls, filtering out angular properties that are prefixed with '$'
+            var controlNames = Object.keys(form).filter(function (key) {
+                return key.indexOf('$') !== 0
+            });
+
+            // set the values to undefined, to avoid validation messages after submitting the form
+            controlNames.map(function (name) {
+                var control = form[name];
+                control.$setViewValue(undefined);
+            });
+
+            form.$setPristine();
+            form.$setUntouched();
+        };
+
+
+    }])
+    .controller('DetailsController', ['$scope', 'Order', function ($scope, Order) {
         $scope.newOrder = {
             description: "",
             price: null
@@ -189,14 +219,14 @@ angular.module('loft', ['ngDialog'])
         $scope.deleteOrder = function (order) {
             $scope.customer.deleteOrder(order);
         };
-    })
-    .directive('loftCustomer', function ($interval, ngDialog, Appraiser) {
+    }])
+    .directive('loftCustomer', ['$interval', 'ngDialog', 'Appraiser', function ($interval, ngDialog, Appraiser) {
         return {
             replace: true,
             templateUrl: 'customer.html',
             controller: function personalCustomerController($scope) {
                 //function for opening the modal
-                $scope.openCustomerDetails = function (customer) {
+                $scope.openCustomerDetails = function () {
                     ngDialog.open({
                         template: 'details.html',
                         controller: 'DetailsController',
@@ -222,8 +252,9 @@ angular.module('loft', ['ngDialog'])
                     scope.moneyTotal = Appraiser.appraiseCustomer(scope.customer, scope.timeTotal);
                 }
 
-                var moneyInterval = $interval(updateMoney, 1000);
+                // update time and money every second
                 var timeInterval = $interval(updateTime, 1000);
+                var moneyInterval = $interval(updateMoney, 1000);
 
                 // clear the intervals to prevent a memory leak
                 element.on('$destroy', function () {
@@ -233,4 +264,4 @@ angular.module('loft', ['ngDialog'])
             }
         };
 
-    });
+    }]);

@@ -22,28 +22,31 @@
             margin: 0;
         }
 
-        input.ng-invalid{
+        input.highlight {
             background-color: #ff7777;
             color: #ffffff;
         }
 
-        input.ng-invalid::-webkit-input-placeholder {
+        input.highlight::-webkit-input-placeholder {
             color: #ffffff;
         }
-        input.ng-invalid:-moz-placeholder {
+
+        input.highlight:-moz-placeholder {
             /* FF 4-18 */
             color: #ffffff;
         }
-        input.ng-invalid::-moz-placeholder {
+
+        input.highlight::-moz-placeholder {
             /* FF 19+ */
             color: #ffffff;
         }
-        input.ng-invalid:-ms-input-placeholder {
+
+        input.highlight:-ms-input-placeholder {
             /* IE 10+ */
             color: #ffffff;
         }
 
-        span.glyphicon-remove:hover{
+        span.glyphicon-remove:hover {
             color: red;
         }
     </style>
@@ -57,29 +60,36 @@
     </div>
 </div>
 <section ng-controller="MainController">
-    <form id="customer-add-form" name="customer_form" class="form-inline text-center" ng-submit="customer_form.$valid && addCustomer()"
+    <form id="customer-add-form" name="customer_form" class="form-inline text-center"
+          ng-submit="customer_form.$valid && addCustomer() && resetForm(customer_form)"
           novalidate>
         <div class="form-group">
-            <input type="text" class="form-control input-lg" ng-model="newCustomer.name" name="customer_name"
+            <input type="text" class="form-control input-lg"
+                   ng-class="{highlight: customer_form.$invalid && customer_form.name.$touched || customer_form.id.$touched}"
+                   ng-model="newCustomer.name" name="name"
                    placeholder="Имя" autofocus ng-required="!(newCustomer.id.length||newCustomer.name.length)">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control input-lg" ng-model="newCustomer.id" name="customer_id"
+            <input type="text" class="form-control input-lg"
+                   ng-class="{highlight: customer_form.$invalid && customer_form.name.$touched || customer_form.id.$touched}"
+                   ng-model="newCustomer.id" name="id"
                    placeholder="Номер" ng-required="!(newCustomer.id.length||newCustomer.name.length)">
         </div>
         <div class="form-group">
-            <input type="number" min="0" max="100" class="form-control input-lg" name="customer_discount_percent" ng-model="newCustomer.discountPercent"
+            <input type="number" min="0" max="100" class="form-control input-lg" name="discount_percent"
+                   ng-model="newCustomer.discountPercent"
                    placeholder="Скидка в процентах">
         </div>
         <div class="form-group">
-            <input type="number" min="0" class="form-control input-lg" name="customer_discount_minutes" ng-model="newCustomer.freeMinutes"
+            <input type="number" min="0" class="form-control input-lg" name="free_minutes"
+                   ng-model="newCustomer.freeMinutes"
                    placeholder="Скидка в минутах">
         </div>
         <div class="form-group">
-            <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn">Добавить посетителя</button>
+            <button class="btn btn-primary btn-lg" type="submit" id="customer-add-btn" ng-disabled="customer_form.$invalid">Добавить посетителя</button>
         </div>
         <div class="form-group">
-            <button class="btn btn-danger btn-lg" type="button">Удалить всех</button>
+            <button class="btn btn-danger btn-lg" type="button" ng-click="deleteAll()">Удалить всех</button>
         </div>
     </form>
     <div style="margin:50px"></div>
