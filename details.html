@@ -1,34 +1,37 @@
-<!-- Modal content-->
 <div>
-    <div class="modal-header text-center">
+    <div class="text-center">
         <h4>Информация о посетителе</h4>
     </div>
-    <div id="customer-details">
-        <h2 id="customer-details-name" ng-bind="customer.name"></h2>
-        <h2 id="customer-details-id" ng-bind="customer.id"></h2>
+    <div>
         <div>
-            <span ng-cloak ng-bind="timeTotal|msToTime" id="customer-details-time"></span>
+            <h3 ng-bind="customer.name" ng-show="customer.name.length"></h3>
+            <h3 ng-bind="'#'+customer.id" ng-show="customer.id.length"></h3>
         </div>
-        <div>
-            <span ng-cloak ng-bind="moneyTotal" id="customer-details-money"></span>
+        <div class="customer-volatile">
+            <span ng-cloak ng-bind="timeTotal | msToTime"></span>
+            <span ng-cloak ng-bind="moneyTotal | rubleCurrency : 0"></span>
         </div>
-        <div role="group" id="customer-details-buttons">
+        <hr>
+        <div role="group">
             <button type="button" class="btn btn-info btn-block" ng-click="checkOut()">Рассчитать</button>
             <button type="button" class="btn btn-info btn-block" ng-click="changeDiscount()">Изменить скидку
             </button>
         </div>
-        <form class="form" id="add-order-form" name="order_form" ng-submit="order_form.$valid && addOrder()" novalidate>
+        <hr>
+        <form class="form" name="order_form" ng-submit="order_form.$valid && addOrder()" novalidate>
             <div class="form-group">
-                <input type="text" class="form-control input-md" placeholder="Заказ" id="name"
-                       name="order_desc" ng-model="newOrder.description" required>
+                <input type="text" class="form-control input-md" placeholder="Заказ"
+                       name="description" ng-model="newOrder.description" minlength="3"
+                       ng-class="{highlight : order_form.$invalid&&order_form.description.$touched}" required>
             </div>
             <div class="form-group">
-                <input placeholder="Цена" type="number" class="form-control input-md" name="price"
-                       ng-model="newOrder.price">
+                <input placeholder="Цена" type="number" class="form-control input-md" min="0" name="price"
+                       ng-model="newOrder.price" ng-class="{highlight : order_form.price.$invalid}">
             </div>
             <button type="submit" class="btn btn-success btn-block">Добавить заказ</button>
         </form>
-        <table class="table table-hover">
+        <hr>
+        <table class="table table-hover" ng-show="customer.orders.length">
             <thead>
             <tr>
                 <th>Заказ</th>
@@ -36,7 +39,7 @@
                 <th style="width: 50px"></th>
             </tr>
             </thead>
-            <tbody id="order-list">
+            <tbody>
             <tr ng-repeat="order in customer.orders">
                 <td ng-bind="order.description"></td>
                 <td ng-bind="order.price"></td>

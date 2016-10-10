@@ -1,6 +1,6 @@
 <tr ng-click="openCustomerDetails()" ng-class="{'checked-out':customer.checkedOut}">
     <td ng-bind="customer.name"></td>
     <td ng-bind="customer.id"></td>
-    <td class="customer-time" ng-bind="timeTotal|msToTime"></td>
-    <td class="customer-money" ng-bind="moneyTotal"></td>
+    <td class="customer-time" ng-bind="timeTotal | msToTime"></td>
+    <td class="customer-money" ng-bind="moneyTotal | rubleCurrency"></td>
 </tr>

@@ -156,6 +156,15 @@ angular.module('loft', ['ngDialog'])
             return timeString;
         };
     })
+    .filter('rubleCurrency', function () {
+        return function (moneyAmount, decimalLimit) {
+            var ruble_sign = "руб";
+            var limit = parseInt(decimalLimit, 10) || 0;
+            var amount = parseFloat(moneyAmount);
+            if (!amount) return "";
+            return amount.toFixed(limit) + ' ' + ruble_sign;
+        }
+    })
     .controller('MainController', ['$scope', '$interval', '$window', 'Customer', 'loftStorage', function ($scope, $interval, $window, Customer, loftStorage) {
         $scope.customers = [];      // the main array that keeps all customers
         $scope.newCustomer = {      // an object bound to the form
