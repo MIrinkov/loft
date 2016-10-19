@@ -5,7 +5,7 @@
     <div>
         <div>
             <h3 ng-bind="customer.name" ng-show="customer.name.length"></h3>
-            <h3 ng-bind="'#'+customer.id" ng-show="customer.id.length"></h3>
+            <h3 ng-bind="customer.id" ng-show="customer.id.length"></h3>
         </div>
         <div class="customer-volatile">
             <span ng-cloak ng-bind="timeTotal | msToTime"></span>

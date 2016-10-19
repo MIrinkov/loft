@@ -165,7 +165,7 @@ angular.module('loft', ['ngDialog'])
             return amount.toFixed(limit) + ' ' + ruble_sign;
         }
     })
-    .controller('MainController', ['$scope', '$interval', '$window', 'Customer', 'loftStorage', function ($scope, $interval, $window, Customer, loftStorage) {
+    .controller('MainController', ['$scope', '$window', 'Customer', 'loftStorage', function ($scope, $window, Customer, loftStorage) {
         $scope.customers = [];      // the main array that keeps all customers
         $scope.newCustomer = {      // an object bound to the form
             name: "",
@@ -264,7 +264,7 @@ angular.module('loft', ['ngDialog'])
                 function updateTime() {
                     // gets the total ms fom start until now
                     scope.timeTotal = Date.now() - scope.customer.start;
-                    if(scope.customer.checkedOut){
+                    if (scope.customer.checkedOut) {
                         $interval.cancel(timeInterval);
                     }
                 }
