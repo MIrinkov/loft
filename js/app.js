@@ -1,7 +1,7 @@
 /**
  * Created by hlfrmn on 9/17/2016.
  */
-angular.module('loft', ['ngDialog'])
+angular.module('loft', ['ngDialog','angular-md5'])
     .factory('Customer', function () {
         function Customer(name, id, start, discount, freeMinutes, orders) {
             this.name = name || '';
@@ -165,7 +165,7 @@ angular.module('loft', ['ngDialog'])
             return amount.toFixed(limit) + ' ' + ruble_sign;
         }
     })
-    .controller('MainController', ['$scope', '$window', 'Customer', 'loftStorage', function ($scope, $window, Customer, loftStorage) {
+    .controller('MainController', ['$scope', '$window', 'md5', 'Customer', 'loftStorage', function ($scope, $window, md5, Customer, loftStorage) {
         $scope.customers = [];      // the main array that keeps all customers
         $scope.newCustomer = {      // an object bound to the form
             name: "",
@@ -184,15 +184,14 @@ angular.module('loft', ['ngDialog'])
         };
 
         $scope.deleteAll = function () {
-            var confirmed = $window.confirm('Are you sure you want to DELETE ALL CUSTOMERS?');
-            if (!confirmed) return;
+            var phrase = $window.prompt('Are you sure you want to DELETE ALL CUSTOMERS?');
+            if (md5.createHash(phrase)!=='6f3564fc323add5233ee8fbbc8b29888') return;
             // first clear the array, then call loftStorage.clear(), since loftStorage.save() ignores empty arrays
             $scope.customers = [];
             loftStorage.clear();
         };
 
         $scope.resetForm = function (form) {
-
             form.$setPristine();
             form.$setUntouched();
 
