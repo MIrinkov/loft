@@ -1,6 +1,6 @@
 # loft
 
-A simple web-page that can be in a cafe, helping to track customers.
+A single page application wriiten for a cafe to help bill the customers.
 
 ## Overview
 
@@ -14,7 +14,7 @@ the customer's total bill.
 Each customer can be checked-out, and there is an option to delete all customers (as per requirements,
 there isn't a way to delete a single customer, although checking-out does help visually).
 
-## Interface
+## Interface and usage
 
 ### Main page
 
@@ -84,11 +84,3 @@ Directives:
     + bound to a single customer using the `=` binding strategy
     + creates `timeTotal` and `moneyTotal` and updates them in the `postLink` function
     + has a controller that opens the modal, and passes the directives scope into the modal
- 
-## Future
-
-Currently requires fiddling with browser settings to run without a server. Should be dealt with using `$templateCache`.
-
-The `customers` array should probably be a service. This will help to emulate and abstract away the model's behaviour.
-
-Add some "useful" features.
