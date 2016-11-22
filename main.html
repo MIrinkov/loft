@@ -86,10 +86,10 @@
                    placeholder="Скидка в минутах">
         </div>
         <div class="form-group">
-            <button class="btn btn-primary btn-lg" type="submit" ng-disabled="customer_form.$invalid">Добавить посетителя</button>
+            <button class="btn btn-primary btn-lg" type="submit" ng-disabled="customer_form.$invalid">Add customer</button>
         </div>
         <div class="form-group">
-            <button class="btn btn-danger btn-lg" type="button" ng-click="deleteAll()">Удалить всех</button>
+            <button class="btn btn-danger btn-lg" type="button" ng-click="deleteAll()">Reset</button>
         </div>
     </form>
     <div style="margin:50px"></div>
@@ -97,14 +97,10 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <!--Name-->
-                <th>Имя</th>
-                <!--ID-->
-                <th>Номер</th>
-                <!--Time-->
-                <th>Время</th>
-                <!--Money-->
-                <th>Бабосики</th>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Time</th>
+                <th>Bill</th>
             </tr>
             </thead>
             <tbody>

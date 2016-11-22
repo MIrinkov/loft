@@ -1,6 +1,6 @@
 <div>
     <div class="text-center">
-        <h4>Информация о посетителе</h4>
+        <h4>Customer information</h4>
     </div>
     <div>
         <div>
@@ -13,8 +13,8 @@
         </div>
         <hr>
         <div role="group">
-            <button type="button" class="btn btn-info btn-block" ng-click="checkOut()">Рассчитать</button>
-            <button type="button" class="btn btn-info btn-block" ng-click="changeDiscount()">Изменить скидку
+            <button type="button" class="btn btn-info btn-block" ng-click="checkOut()">Check out</button>
+            <button type="button" class="btn btn-info btn-block" ng-click="changeDiscount()">Change discount
             </button>
         </div>
         <hr>
@@ -28,14 +28,14 @@
                 <input placeholder="Цена" type="number" class="form-control input-md" min="0" name="price"
                        ng-model="newOrder.price" ng-class="{highlight : order_form.price.$invalid}">
             </div>
-            <button type="submit" class="btn btn-success btn-block">Добавить заказ</button>
+            <button type="submit" class="btn btn-success btn-block">Add order</button>
         </form>
         <hr>
         <table class="table table-hover" ng-show="customer.orders.length">
             <thead>
             <tr>
-                <th>Заказ</th>
-                <th>Цена</th>
+                <th>Order</th>
+                <th>Price</th>
                 <th style="width: 50px"></th>
             </tr>
             </thead>

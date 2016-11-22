@@ -108,6 +108,7 @@ angular.module('loft', ['ngDialog','angular-md5'])
                 $window.localStorage.loftStorage = angular.toJson(array);
         }
 
+        // restores from localStorage backup
         function restore() {
             // builds and returns a new customer array using Order and Customer constructors
             var json = $window.localStorage.loftStorage;
@@ -121,13 +122,14 @@ angular.module('loft', ['ngDialog','angular-md5'])
             });
         }
 
+        // clears backup
         this.clear = function () {
             delete $window.localStorage.loftStorage;
         };
 
+        // injects the storage into customer controller
         this.init = function ($scope) {
-            scope = $scope;
-            scope.customers = restore();
+            $scope.customers = restore();
             $scope.$watch('customers', save, true)
         };
 
@@ -156,6 +158,7 @@ angular.module('loft', ['ngDialog','angular-md5'])
             return timeString;
         };
     })
+    // Currency filter for rubles.
     .filter('rubleCurrency', function () {
         return function (moneyAmount, decimalLimit) {
             var ruble_sign = "руб";
@@ -183,9 +186,14 @@ angular.module('loft', ['ngDialog','angular-md5'])
             return $scope.customers.push(Customer.fromObj($scope.newCustomer));
         };
 
+        // WARNING
+        // The client asked to lock the function behind password protection
+        // Seing, how there is no server, the following is at least
+        // better, than putting it in the code in plain text
         $scope.deleteAll = function () {
+            var clientPasswordMD5 = '6f3564fc323add5233ee8fbbc8b29888';
             var phrase = $window.prompt('Are you sure you want to DELETE ALL CUSTOMERS?');
-            if (md5.createHash(phrase)!=='6f3564fc323add5233ee8fbbc8b29888') return;
+            if (md5.createHash(phrase)!==clientPasswordMD5) return;
             // first clear the array, then call loftStorage.clear(), since loftStorage.save() ignores empty arrays
             $scope.customers = [];
             loftStorage.clear();
